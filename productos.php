@@ -26,13 +26,8 @@
     <!-- Guardamos los datos de la sesion -->
     <?php
     session_start();
-    if (isset($_SESSION["usuario"])) {
-        // Usuario autenticado
-        $usuario = $_SESSION["usuario"];
-    } else {
-        // No hay usuario registrado
-        $usuario = "Invitado";
-    }
+    $usuario = isset($_SESSION["usuario"]) ? $_SESSION["usuario"] : "Invitado";
+
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION["usuario"])) {
         $idProducto = $_POST["id_Producto"];
@@ -110,6 +105,16 @@
             }
         }
     }
+    // Consultamos la cantidad total de productos en la cesta del usuario actual
+    $sqlCantidadCesta =
+        "SELECT SUM(cantidad) as totalProductos FROM productosCestas pc
+     INNER JOIN cestas c ON pc.idCesta = c.idCesta
+     WHERE c.usuario = '$usuario'";
+
+    $resultadoCantidadCesta = $conexion->query($sqlCantidadCesta);
+
+    // Obtenemos la cantidad total
+    $totalProductosEnCesta = $resultadoCantidadCesta->fetch_assoc()["totalProductos"];
 
     ?>
     <!-- Start NAV -->
@@ -153,16 +158,16 @@
             <a class="navbar-brand text-success logo h1 align-self-center" href="index.html">
                 <!-- De de esta forma controlamos un mensaje de bienvenida personalizado para el administrador.
                      Sino, el mensaje de bienvenida es normalito para el usuario "standar" -->
-                     <?php
-                if ($_SESSION["rol"] == "admin") { ?>
+                <?php
+                if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "admin") { ?>
                     <img src="assets/img/estrella.gif" alt="" width="35px">
                     Bienvenido <br>
                     <strong>Satoru-Sama </strong>
                     <img src="assets/img/estrella.gif" alt="" width="35px">
                 <?php } else { ?>
                     Bienvenido <br>
-                    <?php echo $usuario;
-                } ?>
+                    <?php echo $usuario; ?>
+                <?php } ?>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
@@ -186,9 +191,9 @@
                         </li>
                         <!-- Solo cuando se es administrador, puedes entrar en la parte de registrar productos -->
                         <?php
-                        if ($_SESSION["rol"] == "admin") { ?>
+                        if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "admin") { ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="crear_producto.php">Registrar Productos</a>
+                                <a class="nav-link" href="crear_producto.php">Registrar productos</a>
                             </li>
                         <?php } ?>
                         <li class="nav-item">
@@ -199,7 +204,7 @@
                 <div class="navbar align-self-center d-flex">
                     <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
+                            <input type="text" class="form-control" id="inputMobileSearch" placeholder="Buscar ...">
                             <div class="input-group-text">
                                 <i class="fa fa-fw fa-search"></i>
                             </div>
@@ -212,7 +217,9 @@
                     <a class="nav-icon position-relative text-decoration-none" href="#">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
                         <span
-                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"></span>
+                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
+                            <?php echo $totalProductosEnCesta; ?>
+                        </span>
                     </a>
                     <a class="nav-icon position-relative text-decoration-none" href="#">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>
@@ -326,6 +333,21 @@
 
                 <!-- ¡Bienvenidos al circo de Bootstrap! Aquí presentamos la actuación estelar: "El desfile de los productos" -->
                 <div class="container">
+                    <!-- Mensaje de Borrado -->
+                    <div class="container mt-4">
+                        <?php
+                        // Mostrar mensaje de borrado si existe
+                        if (isset($mensajeBorrado)) {
+                            echo '<div class="alert alert-success" role="alert">' . $mensajeBorrado . '</div>';
+                        }
+                        ?>
+                        <!-- Mostrar mensaje de éxito al añadir al carrito -->
+                        <?php
+                        if (isset($mensajeExito)) {
+                            echo '<div class="alert alert-success" role="alert">' . $mensajeExito . '</div>';
+                        }
+                        ?>
+                    </div>
                     <!-- Los artistas (productos) se alinean en el escenario -->
                     <div class="row">
                         <?php
@@ -443,22 +465,6 @@
             </div>
         </div>
     </div> <!-- ¡Gracias, gracias! Fin del circo de Bootstrap -->
-
-    <!-- Mensaje de Borrado -->
-    <div class="container mt-4">
-        <?php
-        // Mostrar mensaje de borrado si existe
-        if (isset($mensajeBorrado)) {
-            echo '<div class="alert alert-success" role="alert">' . $mensajeBorrado . '</div>';
-        }
-        ?>
-        <!-- Mostrar mensaje de éxito al añadir al carrito -->
-        <?php
-        if (isset($mensajeExito)) {
-            echo '<div class="alert alert-success" role="alert">' . $mensajeExito . '</div>';
-        }
-        ?>
-    </div>
     <!-- End Content -->
 
     <!-- Start Brands -->

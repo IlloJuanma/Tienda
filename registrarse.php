@@ -60,7 +60,7 @@
 
     <div class="bg-white p-5 rounded-5 text-secondary shadow" style="width: 25rem">
         <div class="d-flex justify-content-center">
-            <img src="assets/registrar.png" alt="login-icon" style="height: 7rem" />
+            <img src="assets/img/registrarse.gif" alt="login-icon" style="height: 7rem" />
         </div>
         <div class="text-center fs-1 fw-bold">Tōroku shite kudasai</div>
         <form action="" method="POST">

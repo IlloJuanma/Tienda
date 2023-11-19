@@ -17,19 +17,29 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    <?php require 'objetos/producto.php' ?>
+    <?php require 'funciones/base_datos_tienda.php' ?>
 
 </head>
 
 <body>
     <?php
     session_start();
-    if (isset($_SESSION["usuario"])) {
-        $usuario = $_SESSION["usuario"];
-    } else {
-        header("Location: login.php");
-    }
+    $usuario = isset($_SESSION["usuario"]) ? $_SESSION["usuario"] : "Invitado";
+
+    // Consultamos la cantidad total de productos en la cesta del usuario actual
+    $sqlCantidadCesta =
+        "SELECT SUM(cantidad) as totalProductos FROM productosCestas pc
+     INNER JOIN cestas c ON pc.idCesta = c.idCesta
+     WHERE c.usuario = '$usuario'";
+
+    $resultadoCantidadCesta = $conexion->query($sqlCantidadCesta);
+
+    // Obtenemos la cantidad total
+    $totalProductosEnCesta = $resultadoCantidadCesta->fetch_assoc()["totalProductos"];
 
     ?>
+
     <!-- Start NAV -->
     <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
         <div class="container text-light">
@@ -71,16 +81,17 @@
             <a class="navbar-brand text-success logo h1 align-self-center" href="index.html">
                 <!-- De de esta forma controlamos un mensaje de bienvenida personalizado para el administrador.
                      Sino, el mensaje de bienvenida es normalito para el usuario "standar" -->
+                <!-- Verifica si la clave "rol" está definida en la sesión antes de intentar acceder a ella -->
                 <?php
-                if ($_SESSION["rol"] == "admin") { ?>
+                if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "admin") { ?>
                     <img src="assets/img/estrella.gif" alt="" width="35px">
                     Bienvenido <br>
                     <strong>Satoru-Sama </strong>
                     <img src="assets/img/estrella.gif" alt="" width="35px">
                 <?php } else { ?>
                     Bienvenido <br>
-                    <?php echo $usuario;
-                } ?>
+                    <?php echo $usuario; ?>
+                <?php } ?>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
@@ -104,9 +115,9 @@
                         </li>
 
                         <?php
-                        if ($_SESSION["rol"] == "admin") { ?>
+                        if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "admin") { ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="crear_producto.php">Registrar Productos</a>
+                                <a class="nav-link" href="crear_producto.php">Registrar productos</a>
                             </li>
                         <?php } ?>
                         <li class="nav-item">
@@ -129,6 +140,10 @@
                     </a>
                     <a class="nav-icon position-relative text-decoration-none" href="#">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
+                        <span
+                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
+                            <?php echo $totalProductosEnCesta; ?>
+                        </span>
                     </a>
                     <a class="nav-icon position-relative text-decoration-none" href="#">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>
@@ -201,7 +216,7 @@
         <div class="row text-center pt-5 pb-3">
             <div class="col-lg-6 m-auto">
                 <h1><img src="assets/img/fuji.gif" alt="fuji" width="50px"> Watashi no sābisu <img
-                        src="assets/img/fuji.gif" alt="fuji" width="50px"></h1>
+                        src="assets/img/fuji2.gif" alt="fuji" width="50px"></h1>
                 <p>
                     Descubre la atención excepcional las <strong>24 horas</strong> en <strong>Satoru no kōnā</strong>.
                     Aprovecha nuestras <em>promociones irresistibles</em> y disfruta de envíos rápidos a todo el mundo.

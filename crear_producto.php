@@ -66,7 +66,7 @@
         if ($_FILES["imagen"]["size"] < $maxSize) {
 
             if ($_FILES["imagen"]["type"] == "image/jpg" || $_FILES["imagen"]["type"] == "image/png" || $_FILES["imagen"]["type"] == "image/jpeg") {
-                $ruta_final = "img/" . $nombre_imagen;
+                $ruta_final = "assets/img/" . $nombre_imagen;
                 move_uploaded_file($ruta_temporal, $ruta_final);
             } else {
                 $err_imagen = '<h2>El tipo de la imagen no está permitido, sólo JPG,PNG ó JPEG</h2>';
@@ -135,6 +135,7 @@
             }
         }
     }
+    
     ?>
     <!-- Start NAV -->
     <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
@@ -255,35 +256,48 @@
             </div>
         </div>
     </section>
+    <style>
+        .form-control {
+            border: 1px solid #3498db;
+            border-radius: 10px;
+            padding: 8px;
+            /* Espacio entre el borde y el texto */
+        }
+    </style>
 
     <section class="container my-4">
-        <form action="" method="POST" enctype="multipart/form-data" class="row g-3 border p-4 bg-light">
+        <form action="" method="POST" enctype="multipart/form-data" class="row g-3 border p-4 bglight-">
             <legend>
                 <div class="row text-center pt-5 pb-3">
                     <div class="col-lg-6 m-auto">
                         <h1 class="h1 fs-4"><img src="assets/img/carpa.gif" alt="carpa" width="50px"> Crear Producto
-                            <img src="assets/img/carpa.gif" alt="carpa" width="50px"></h1>
+                            <img src="assets/img/carpa.gif" alt="carpa" width="50px">
+                        </h1>
                         <p class="fs-5">Sā, kowagaranaide</p>
                     </div>
                 </div>
             </legend>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Nombre <img src="assets/img/nombre.gif" alt="imagen" width="45px"></label>
+                <label class="form-label fs-5">Nombre <img src="assets/img/nombre.gif" alt="imagen"
+                        width="45px"></label>
                 <input type="text" class="form-control fs-5" name="nombre" required>
 
             </div>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Precio <img src="assets/img/precio.gif" alt="imagen" width="45px"></label>
+                <label class="form-label fs-5">Precio <img src="assets/img/precio.gif" alt="imagen"
+                        width="45px"></label>
                 <input type="text" class="form-control fs-5" name="precio" required>
 
             </div>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Descripción <img src="assets/img/descripcion.gif" alt="imagen" width="45px"></label>
+                <label class="form-label fs-5">Descripción <img src="assets/img/descripcion.gif" alt="imagen"
+                        width="45px"></label>
                 <input type="text" class="form-control fs-5" name="descripcion">
 
             </div>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Cantidad <img src="assets/img/cantidad.gif" alt="imagen" width="45px"></label>
+                <label class="form-label fs-5">Cantidad <img src="assets/img/cantidad.gif" alt="imagen"
+                        width="45px"></label>
                 <input type="text" class="form-control fs-5" name="cantidad">
 
             </div>
@@ -329,42 +343,6 @@
         </form>
     </section>
 
-
-
-
-
-
-    <!-- <div class="col-md-8 offset-md-2">
-            <form action="" method="POST" enctype="multipart/form-data">
-                
-                    <legend class="mb-4">Inserta Producto</legend>
-                    <div class="mb-3">
-                        <label class="form-label">Nombre Producto</label>
-                        <input class="form-control" type="text" name="nombre">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Precio</label>
-                            <input class="form-control" type="text" name="precio">
-                        
-                            <div class="mb-3">
-                                <label class="form-label">Descripción</label>
-                                <input class="form-control" type="text" name="descripcion">
-                            
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Cantidad</label>
-                                <input class="form-control" type="text" name="cantidad">
-                            
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Imagen</label>
-                                <label class="custom-file-upload">
-                                    <input class="form-control" type="file" name="imagen" id="imagen"> Selecciona archivo
-                                </label>
-                            </div>
-                            <input class="btn btn-primary" type="submit" value="Registrar">
-        
-                </form> -->
     <?php
     if (isset($nombre) && isset($precio) && isset($descripcion) && isset($cantidad) && isset($ruta_final)) {
         $sql = "INSERT INTO productos (nombreProducto, precio, descripcion,
