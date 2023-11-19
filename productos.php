@@ -31,6 +31,7 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION["usuario"])) {
         $idProducto = $_POST["id_Producto"];
+        $cantidadSeleccionada = $_POST["cantidad"];
         if ($_POST["accion"] == "aniadir") {
             $usuario = $_SESSION["usuario"];
 
@@ -53,7 +54,7 @@
                     // Si el producto ya está en la cesta, incremento la cantidad
                     $filaProductoExistente = $resultadoProductoExistente->fetch_assoc();
                     $cantidadExistente = $filaProductoExistente["cantidad"];
-                    $nuevaCantidad = $cantidadExistente + 1;
+                    $nuevaCantidad = $cantidadExistente + $cantidadSeleccionada;
 
                     // Actualizo la cantidad
                     $sqlActualizarCantidad =
@@ -62,7 +63,7 @@
                 } else {
                     // Si el producto no está en la cesta, inserto un nuevo registro
                     $sqlInsert =
-                        "INSERT INTO productosCestas (idCesta, idProducto, cantidad) VALUES ('$idCesta', '$idProducto', '1')";
+                        "INSERT INTO productosCestas (idCesta, idProducto, cantidad) VALUES ('$idCesta', '$idProducto', '$cantidadSeleccionada')";
                     $conexion->query($sqlInsert);
                 }
 
@@ -214,7 +215,7 @@
                         data-bs-target="#templatemo_search">
                         <i class="fa fa-fw fa-search text-dark mr-2"></i>
                     </a>
-                    <a class="nav-icon position-relative text-decoration-none" href="#">
+                    <a class="nav-icon position-relative text-decoration-none" href="pedido.php">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
                         <span
                             class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
@@ -252,7 +253,7 @@
     </div>
 
     <!-- Start Content -->
-    <div class="container py-5">
+    <div class="container py-5k">
         <div class="row">
 
             <div class="col-lg-3">
@@ -349,24 +350,23 @@
                         ?>
                     </div>
                     <!-- Los artistas (productos) se alinean en el escenario -->
-                    <div class="row">
+                    <div class="row d-flex align-items-stretch">
                         <?php
                         // ¡Comienza el espectáculo! Aplausos para cada producto en el escenario
                         while ($fila = $resultado->fetch_assoc()) {
                             ?>
                             <!-- Cada producto es una estrella del espectáculo -->
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <!-- ¡Magia en acción! La tarjeta del producto aparece con un truco asombroso -->
-                                <div class="card mb-4 product-wap rounded-0" style="min-height: 900px;">
+                                <div class="card mb-5 product-wap rounded-0">
                                     <!-- Aparece la imagen del producto, ¡oh sorpresa! -->
                                     <div class="card rounded-0">
                                         <!-- ¡Abracadabra! La imagen se muestra con estilo -->
                                         <img class="card-img rounded-0 img-fluid" src="<?php echo $fila["imagen"] ?>"
                                             alt="Imagen del producto"
                                             style="width: 100%; height: 450px; object-fit: cover;">
-
                                         <!-- ¡El gran overlay mágico! Botones de acción aparecen con un toque de magia -->
-                                        <!-- --------------------- Aqui se añade al carrito o se borra si eres admi IMPORTANTE!!!!! OJO --------------------------- -->
+                                        <!-- --------------------- Aquí se añade al carrito o se borra si eres admi IMPORTANTE!!!!! OJO --------------------------- -->
                                         <div
                                             class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                             <ul class="list-unstyled">
@@ -380,37 +380,17 @@
                                                             name="accion" value="borrar">
                                                             <i class="fas fa-times"></i>
                                                         </button>
-                                                    <?php } ?>
-                                                </form>
-
+                                                    </form>
+                                                <?php } ?>
                                                 <!-- ¡La visión de futuro! Botón para ver la imagen en grande -->
                                                 <li><a class="btn btn-success text-white mt-2"
                                                         href="<?php echo $fila["imagen"] ?>" target="_blank"><i
                                                             class="far fa-eye"></i></a></li>
-                                                <!-- ¡Compra ya! Botón para agregar al carrito -->
-                                                <form method="post" action="">
-                                                    <input type="hidden" value="<?php echo $fila["idProducto"]; ?>"
-                                                        name="id_Producto">
-                                                    <!-- Otros campos ocultos si es necesario -->
-                                                    <button type="submit" class="btn btn-success text-white mt-2"
-                                                        name="accion" value="aniadir">
-                                                        <i class="fas fa-cart-plus"></i>
-                                                    </button>
-                                                </form>
-
                                             </ul>
                                         </div>
                                     </div>
-
-
                                     <!-- ¡Aquí está el truco final! Detalles mágicos del producto -->
                                     <div class="card-body">
-                                        <!-- La identidad secreta: el ID del producto -->
-                                        <p class="h3 text-decoration-none">
-                                            <strong>Id:</strong>
-                                            <?php echo $fila["idProducto"] ?>
-                                        </p>
-                                        <br>
                                         <!-- El nombre del producto, ¡una revelación extraordinaria! -->
                                         <p class="h3 text-decoration-none">
                                             <strong>Nombre: </strong>
@@ -428,7 +408,6 @@
                                             <strong>Cantidad: </strong>
                                             <?php echo $fila["cantidad"] ?>
                                         </p>
-
                                         <!-- La valoración de estrellas, ¡el cielo nos sonríe! -->
                                         <ul class="list-unstyled d-flex justify-content-center mb-1">
                                             <li>
@@ -447,18 +426,35 @@
                                                 ?>
                                             </li>
                                         </ul>
-
                                         <!-- ¡El precio, el tesoro escondido! -->
                                         <p class="text-center mb-0">
                                             <strong>
                                                 <?php echo $fila["precio"] ?>€
                                             </strong>
                                         </p>
+                                        <!-- Selección de cantidad para añadir al carrito -->
+                                        <form method="post" action="" class="mt-2">
+                                            <input type="hidden" value="<?php echo $fila["idProducto"]; ?>"
+                                                name="id_Producto">
+                                            <label for="cantidad">Cantidad:</label>
+                                            <select name="cantidad" id="cantidad">
+                                                <?php
+                                                // Puedes ajustar el rango según tus necesidades
+                                                for ($i = 1; $i <= 5; $i++) {
+                                                    echo "<option value=\"$i\">$i</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                            <button type="submit" class="btn btn-success text-white mt-2" name="accion"
+                                                value="aniadir">
+                                                <i class="fas fa-cart-plus"></i> Añadir al carrito
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                             <?php
-                        } // ¡Fin del acto! La cortina baja para cada producto.
+                        }
                         ?>
                     </div>
                 </div> <!-- ¡Aplausos! Fin del espectáculo -->
@@ -466,6 +462,8 @@
         </div>
     </div> <!-- ¡Gracias, gracias! Fin del circo de Bootstrap -->
     <!-- End Content -->
+
+
 
     <!-- Start Brands -->
     <section class="bg-light py-5">
