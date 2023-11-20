@@ -66,7 +66,7 @@
         <form action="" method="POST">
             <div class="input-group mt-4">
                 <div class="input-group-text bg-info">
-                    <img src="assets/user.gif" alt="username-icon" style="height: 1rem" />
+                    <img src="assets/img/user.gif" alt="username-icon" style="height: 1rem" />
                 </div>
                 <input class="form-control bg-light" type="text" placeholder="Usuario" name="usuario" />
                 <?php if (isset($err_usuario))
@@ -74,7 +74,7 @@
             </div>
             <div class="input-group mt-1">
                 <div class="input-group-text bg-info">
-                    <img src="assets/password.gif" alt="password-icon" style="height: 1rem" />
+                    <img src="assets/img/password.gif" alt="password-icon" style="height: 1rem" />
                 </div>
                 <input class="form-control bg-light" type="password" placeholder="Contraseña" name="contrasena" />
                 <?php if (isset($err_contrasena))
@@ -82,7 +82,7 @@
             </div>
             <div class="input-group mt-1">
                 <div class="input-group-text bg-info">
-                    <img src="assets/date.gif" alt="password-icon" style="height: 1rem" />
+                    <img src="assets/img/date.gif" alt="password-icon" style="height: 1rem" />
                 </div>
                 <input class="form-control bg-light" type="date" name="fecha_nacimiento" />
                 <?php if (isset($err_fecha_nacimiento))
@@ -117,7 +117,7 @@
             </div>
         </div>
         <div class="btn d-flex gap-2 justify-content-center border mt-3 shadow-sm">
-            <img src="assets/google.png" alt="google-icon" style="height: 1.6rem" />
+            <img src="assets/img/google.png" alt="google-icon" style="height: 1.6rem" />
             <div class="fw-semibold text-secondary">Continuar con Google</div>
         </div>
     </div>

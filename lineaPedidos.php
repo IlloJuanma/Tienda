@@ -2,9 +2,9 @@
 <html lang="en">
 
 <head>
-    <title>Satoru no kōnā</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Satoru no kōnā</title>
 
     <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
     <!-- Cargamos los requires necesarios de PhP-->
     <?php require 'objetos/producto.php' ?>
-    <?php require 'objetos/productoCesta.php' ?>
     <?php require 'funciones/base_datos_tienda.php' ?>
 </head>
 
@@ -28,13 +27,6 @@
     session_start();
     $usuario = isset($_SESSION["usuario"]) ? $_SESSION["usuario"] : "Invitado";
 
-    // Obtengo el idCestas y la cantidad del usuario actual
-    $sqlCesta = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
-    $resultadoCestas = $conexion->query($sqlCesta);
-    if ($resultadoCestas->num_rows > 0) {
-        $filaCestas = $resultadoCestas->fetch_assoc();
-        $idCesta = $filaCestas["idCesta"];
-    }
     // Consultamos la cantidad total de productos en la cesta del usuario actual
     $sqlCantidadCesta =
         "SELECT SUM(cantidad) as totalProductos FROM productosCestas pc
@@ -46,20 +38,7 @@
     // Obtenemos la cantidad total
     $totalProductosEnCesta = $resultadoCantidadCesta->fetch_assoc()["totalProductos"];
 
-    if ($_SERVER["accion"] == "comprar" && isset($_SESSION["usuario"])) {
-        $sqlPedido = "SELECT p.idProducto AS idProducto,
-                       p.precio AS precio, 
-                       c.cantidad AS cantidad
-                       FROM productos p JOIN productosCestas c
-                       ON p.idProducto = c.idProducto
-                       WHERE idCesta ='$idCesta'";
-        $resultado = $conexion->query($sqlPedido);
-        $contador =1;
-        
-
-    }
     ?>
-
 
     <!-- Start NAV -->
     <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
@@ -153,7 +132,7 @@
                     <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                         <i class="fa fa-fw fa-search text-dark mr-2"></i>
                     </a>
-                    <a class="nav-icon position-relative text-decoration-none" href="#">
+                    <a class="nav-icon position-relative text-decoration-none" href="pedido.php">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
                         <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
                             <?php echo $totalProductosEnCesta; ?>
@@ -184,64 +163,54 @@
             </form>
         </div>
     </div>
-
-    <!-- body principal -->
+    <!-- -------------------------------------------------------------- LINEA DE PEDIDOS ---------------------------------------------------------------  -->
+    <h1 class="container">Compra realizada</h1>
     <?php
-    $sql = "SELECT * FROM productosCestas WHERE idCesta = '$idCesta'";
-    $resultado = $conexion->query($sql);
-    $productoCesta = [];
+    
 
-    while ($fila = $resultado->fetch_assoc()) {
-        $nuevo_productoCesta = new productoCesta(
-            $fila["idProducto"],
-            $fila["idCesta"],
-            $fila["cantidad"]
 
-        );
-        array_push($productoCesta, $nuevo_productoCesta);
-    }
-    ?><div class="container">
+
+    ?>
+    <div class="container">
         <div class="col-md-8">
             <div class="col-12">
-                <h1 class="mt-5 mb-4">Productos</h1>
                 <div class="table-responsive">
                     <table class="table table-hover table-primary">
                         <thead class="table-dark">
                             <tr>
-                                <th>Id del Producto</th>
-                                <th>Nombre del Producto</th>
-                                <th>Cantidad a comprar</th>
+                                <th>Linea de Pedido</th>
+                                <th>Id Producto</th>
+                                <th>Id Pedido</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
                             </tr>
                         </thead>
                         <tbody class="table-group-divider">
-                            <?php foreach ($productoCesta as $producto) { ?>
-                                <tr>
-                                    <td class="align-middle">
-                                        <?php echo $producto->idProducto ?>
-                                    </td>
-                                    <td class="align-middle">
-                                        <?php echo $producto->idCesta ?>
-                                    </td>
-                                    <td class="align-middle">
-                                        <?php echo $producto->cantidad ?>
-                                    </td>
-                                </tr>
-                            <?php } ?>
+
+                            <tr>
+                                <td class="align-middle">
+
+                                </td>
+                                <td class="align-middle">
+
+                                </td>
+                                <td class="align-middle">
+
+                                </td>
+                                <td class="align-middle">
+
+                                </td>
+                                <td class="align-middle">
+
+                                </td>
+                            </tr>
                         </tbody>
-                        <tfoot class="text-center">
-                            <td colspan="3">
-                                <form action="" method="POST">
-                                    <button type="submit" class="btn btn-success text-white mt-2" name="accion" value="comprar">
-                                        <i class="fas fa-cart-plus"></i>Realizar pedido
-                                    </button>
-                                </form>
-                            </td>
-                        </tfoot>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Footer -->
     <footer class="bg-dark" id="tempaltemo_footer">
@@ -345,6 +314,5 @@
     <!-- End Script -->
 
 </body>
-<!-- Gracias :) :) :) -->
 
 </html>
