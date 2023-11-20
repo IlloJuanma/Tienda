@@ -27,7 +27,6 @@
                   </div>';
 
 
-            // echo "<h2>Usuario no encontrado</h2>";
         } else {
             while ($fila = $resultado->fetch_assoc()) {
                 $contrasena_cifrada = $fila["contrasena"];

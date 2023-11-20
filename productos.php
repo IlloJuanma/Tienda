@@ -14,10 +14,12 @@
     <link rel="stylesheet" href="assets/css/custom.css">
 
     <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
     <?php require 'objetos/producto.php' ?>
     <?php require 'funciones/base_datos_tienda.php' ?>
+    <?php require 'funciones/depurar.php' ?>
 
 </head>
 
@@ -27,7 +29,6 @@
     session_start();
     $usuario = isset($_SESSION["usuario"]) ? $_SESSION["usuario"] : "Invitado";
 
-
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION["usuario"])) {
         $idProducto = $_POST["id_Producto"];
         if (isset($_POST["cantidad"])) {
@@ -35,8 +36,6 @@
         }
         if ($_POST["accion"] == "aniadir") {
             $usuario = $_SESSION["usuario"];
-
-            //Aqui puedo realizar validaciones si quiero
 
             // Obtengo el idCestas y la cantidad del usuario actual
             $sqlCesta = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
@@ -52,61 +51,113 @@
                 $resultadoProductoExistente = $conexion->query($sqlProductoExistente);
 
                 if ($resultadoProductoExistente->num_rows > 0) {
-                    // Si el producto ya está en la cesta, incremento la cantidad
+                    // Si el producto ya está en la cesta, actualizo la cantidad
                     $filaProductoExistente = $resultadoProductoExistente->fetch_assoc();
                     $cantidadExistente = $filaProductoExistente["cantidad"];
                     $nuevaCantidad = $cantidadExistente + $cantidadSeleccionada;
 
-                    // Actualizo la cantidad
-                    $sqlActualizarCantidad =
-                        "UPDATE productosCestas SET cantidad = '$nuevaCantidad' WHERE idCesta = '$idCesta' AND idProducto = '$idProducto'";
-                    $conexion->query($sqlActualizarCantidad);
+                    // Obtengo la cantidad disponible del producto
+                    $sqlCantidadProducto = "SELECT cantidad FROM productos WHERE idProducto = '$idProducto'";
+                    $resultadoCantidadProducto = $conexion->query($sqlCantidadProducto);
+
+                    if ($resultadoCantidadProducto->num_rows > 0) {
+                        $filaCantidadProducto = $resultadoCantidadProducto->fetch_assoc();
+                        $cantidadDisponible = $filaCantidadProducto["cantidad"];
+
+                        // Verifico si hay suficiente cantidad disponible
+                        if ($cantidadDisponible >= $cantidadSeleccionada && $cantidadSeleccionada > 0) {
+
+                            // Actualizo la cantidad en la tabla productosCestas
+                            $sqlActualizarCantidadExistente = "UPDATE productosCestas SET cantidad = '$nuevaCantidad' WHERE idCesta = '$idCesta' AND idProducto = '$idProducto'";
+                            $conexion->query($sqlActualizarCantidadExistente);
+
+                            // Actualizo la cantidad disponible en la tabla productos
+                            $sqlActualizarCantidadProducto = "UPDATE productos SET cantidad = cantidad - '$cantidadSeleccionada' WHERE idProducto = '$idProducto'";
+                            $conexion->query($sqlActualizarCantidadProducto);
+
+                            $mensajeExito = "Producto añadido a la cesta!!";
+                        } else {
+                            // No hay suficiente cantidad disponible, muestra un mensaje de error
+                            $mensajeError = "No hay suficiente stock por el momento Gomen'nasai!!!";
+                        }
+                    } else {
+                        // No se pudo obtener la cantidad del producto, muestra un mensaje de error
+                        $mensajeError = "Error al obtener la cantidad del producto.";
+                    }
+
                 } else {
                     // Si el producto no está en la cesta, inserto un nuevo registro
                     $sqlInsert =
                         "INSERT INTO productosCestas (idCesta, idProducto, cantidad) VALUES ('$idCesta', '$idProducto', '$cantidadSeleccionada')";
                     $conexion->query($sqlInsert);
-                }
 
-                $mensajeExito = "Producto añadido a la cesta!!";
+                    // Obtengo la cantidad disponible del producto
+                    $sqlCantidadProducto = "SELECT cantidad FROM productos WHERE idProducto = '$idProducto'";
+                    $resultadoCantidadProducto = $conexion->query($sqlCantidadProducto);
+
+                    if ($resultadoCantidadProducto->num_rows > 0) {
+                        $filaCantidadProducto = $resultadoCantidadProducto->fetch_assoc();
+                        $cantidadDisponible = $filaCantidadProducto["cantidad"];
+
+                        // Verifico si hay suficiente cantidad disponible
+                        if ($cantidadDisponible >= $cantidadSeleccionada && $cantidadSeleccionada > 0) {
+
+                            // Actualizo la cantidad disponible en la tabla productos
+                            $sqlActualizarCantidadProducto = "UPDATE productos SET cantidad = cantidad - '$cantidadSeleccionada' WHERE idProducto = '$idProducto'";
+                            $conexion->query($sqlActualizarCantidadProducto);
+
+                            $mensajeExito = "Producto añadido a la cesta!!";
+                        } else {
+                            // No hay suficiente cantidad disponible, muestra un mensaje de error
+                            $mensajeError = "No hay suficiente stock por el momento Gomen'nasai!!!";
+                        }
+                    } else {
+                        // No se pudo obtener la cantidad del producto, muestra un mensaje de error
+                        $mensajeError = "Error al obtener la cantidad del producto.";
+                    }
+                }
             } else {
                 $mensajeError = "Producto no añadido a la cesta, Error!";
             }
         }
-        if ($_POST["accion"] == "borrar") {
-            $id_Producto = $_POST["id_Producto"];
+    }
+    if (isset($_POST["accion"]) && $_POST["accion"] == "borrar") {
+        $id_Producto = $_POST["id_Producto"];
 
-            // Vamos a borrar tanto el producto como la cesta y la direccion de la      
-            //imagen para que al borrar el producto, borremos la imagen de nuestro pc
-            $sqlBorrarProducto = "SELECT * FROM productos WHERE idProducto = '$id_Producto'";
-            $resultado = $conexion->query($sqlBorrarProducto);
+        // Vamos a borrar tanto el producto como la cesta y la direccion de la      
+        //imagen para que al borrar el producto, borremos la imagen de nuestro pc
+        $sqlBorrarProducto = "SELECT * FROM productos WHERE idProducto = '$id_Producto'";
+        $resultado = $conexion->query($sqlBorrarProducto);
 
-            //Si hay filas que leer...
-            if ($resultado->num_rows > 0) {
-                while ($row = $resultado->fetch_assoc()) {
-                    $imagen = $row["imagen"];
-                }
-            }
-            unlink($imagen);
-            //Fin de borrar imagen
-
-            //Necesito borrar antes las referencias a ese producto
-            //ya que se relaciona con otra tabla
-            $sqlBorrarCesta =
-                "DELETE FROM productosCestas WHERE idProducto = $id_Producto";
-            $sqlBorrarProducto =
-                "DELETE FROM productos WHERE idProducto = $id_Producto";
-            if (
-                $conexion->query($sqlBorrarCesta) &&
-                $conexion->query($sqlBorrarProducto) === TRUE
-            ) {
-                //unlink ("img/" . imagen);
-                $mensajeBorrado = "Producto Borrado Correctamente!!";
-            } else {
-                $mensajeBorrado = "Error al borrar producto: " . $conn->error();
+        //Si hay filas que leer...
+        if ($resultado->num_rows > 0) {
+            while ($row = $resultado->fetch_assoc()) {
+                $imagen = $row["imagen"];
             }
         }
+        unlink($imagen);
+        //Fin de borrar imagen
+    
+        //Necesito borrar antes las referencias a ese producto
+        //ya que se relaciona con otra tabla
+        $sqlBorrarCesta =
+            "DELETE FROM productosCestas WHERE idProducto = $id_Producto";
+        $sqlBorrarProducto =
+            "DELETE FROM productos WHERE idProducto = $id_Producto";
+        $slqBorrarlineasPedido =
+            "DELETE FROM lineasPedidos WHERE idProducto = $id_Producto";
+        if (
+            $conexion->query($sqlBorrarCesta) &&
+            $conexion->query($sqlBorrarlineasPedido) &&
+            $conexion->query($sqlBorrarProducto) === TRUE
+        ) {
+            //unlink ("img/" . imagen);
+            $mensajeBorrado = "Producto Borrado Correctamente!!";
+        } else {
+            $mensajeBorrado = "Error al borrar producto: " . $conn->error();
+        }
     }
+
     // Consultamos la cantidad total de productos en la cesta del usuario actual
     $sqlCantidadCesta =
         "SELECT SUM(cantidad) as totalProductos FROM productosCestas pc
@@ -125,19 +176,23 @@
             <div class="w-100 d-flex justify-content-between">
                 <div>
                     <i class="fa fa-envelope mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">IlloJuanma@gmail.com</a>
+                    <a class="navbar-sm-brand text-light text-decoration-none"
+                        href="mailto:info@company.com">IlloJuanma@gmail.com</a>
                     <i class="fa fa-phone mx-2"></i>
                     <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">050-254-6399</a>
                 </div>
                 <div>
                     <a href="https://steamcommunity.com/profiles/76561198093473164">
-                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo" style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"
+                            style="width: 30px;">
                     </a>
                     <a href="https://www.instagram.com/juanma_rodrguez/">
-                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo" style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"
+                            style="width: 30px;">
                     </a>
                     <a href="https://twitter.com/MrFlexaverde">
-                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo" style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"
+                            style="width: 30px;">
                     </a>
                     <a href="https://github.com/IlloJuanma">
                         <img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo" style="width: 30px;">
@@ -164,15 +219,18 @@
                     <img src="assets/img/estrella.gif" alt="" width="35px">
                 <?php } else { ?>
                     Bienvenido <br>
-                    <?php echo $usuario; ?>
+                    <?php echo htmlspecialchars($usuario); ?>
                 <?php } ?>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
+            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
+                id="templatemo_main_nav">
                 <div class="flex-fill">
                     <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
                         <li class="nav-item">
@@ -205,18 +263,24 @@
                             </div>
                         </div>
                     </div>
-                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
+                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
+                        data-bs-target="#templatemo_search">
                         <i class="fa fa-fw fa-search text-dark mr-2"></i>
                     </a>
-                    <a class="nav-icon position-relative text-decoration-none" href="pedido.php">
-                        <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
-                            <?php echo $totalProductosEnCesta; ?>
-                        </span>
-                    </a>
+                    <?php
+                    if (isset($_SESSION["rol"]) && ($_SESSION["rol"] == "admin" || $_SESSION["rol"] == "cliente")) { ?>
+                        <a class="nav-icon position-relative text-decoration-none" href="pedido.php">
+                            <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
+                            <span
+                                class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
+                                <?php echo $totalProductosEnCesta; ?>
+                            </span>
+                        </a>
+                    <?php } ?>
                     <a class="nav-icon position-relative text-decoration-none" href="#">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"></span>
+                        <span
+                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"></span>
                     </a>
                 </div>
             </div>
@@ -226,7 +290,8 @@
     <!-- Close Header -->
 
     <!-- Modal -->
-    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="w-100 pt-1 mb-5 text-right">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -311,7 +376,7 @@
 
                 <?php
                 // Aquí empieza la fiesta de los productos, ¡preparaos para la diversión!
-
+                
                 // Consulta mágica para seleccionar todos los productos, ¡Abracadabra!
                 $sql = "SELECT * FROM productos";
 
@@ -337,6 +402,9 @@
                         if (isset($mensajeExito)) {
                             echo '<div class="alert alert-success" role="alert">' . $mensajeExito . '</div>';
                         }
+                        if (isset($mensajeError)) {
+                            echo '<div class="alert alert-success" role="alert">' . $mensajeError . '</div>';
+                        }
                         ?>
                     </div>
                     <!-- Los artistas (productos) se alinean en el escenario -->
@@ -344,7 +412,7 @@
                         <?php
                         // ¡Comienza el espectáculo! Aplausos para cada producto en el escenario
                         while ($fila = $resultado->fetch_assoc()) {
-                        ?>
+                            ?>
                             <!-- Cada producto es una estrella del espectáculo -->
                             <div class="col-md-5">
                                 <!-- ¡Magia en acción! La tarjeta del producto aparece con un truco asombroso -->
@@ -352,23 +420,30 @@
                                     <!-- Aparece la imagen del producto, ¡oh sorpresa! -->
                                     <div class="card rounded-0">
                                         <!-- ¡Abracadabra! La imagen se muestra con estilo -->
-                                        <img class="card-img rounded-0 img-fluid" src="<?php echo $fila["imagen"] ?>" alt="Imagen del producto" style="width: 100%; height: 500px; object-fit: cover;">
+                                        <img class="card-img rounded-0 img-fluid" src="<?php echo $fila["imagen"] ?>"
+                                            alt="Imagen del producto"
+                                            style="width: 100%; height: 500px; object-fit: cover;">
                                         <!-- ¡El gran overlay mágico! Botones de acción aparecen con un toque de magia -->
                                         <!-- --------------------- Aquí se añade al carrito o se borra si eres admi IMPORTANTE!!!!! OJO --------------------------- -->
-                                        <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                                        <div
+                                            class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                             <ul class="list-unstyled">
                                                 <!-- Botón para borrar productos SOLO SI ERES ADMIN -->
                                                 <?php
                                                 if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "admin") { ?>
                                                     <form action="" method="POST">
-                                                        <input type="hidden" value="<?php echo $fila["idProducto"]; ?>" name="id_Producto">
-                                                        <button type="submit" class="btn btn-success text-white mt-2" name="accion" value="borrar">
+                                                        <input type="hidden" value="<?php echo $fila["idProducto"]; ?>"
+                                                            name="id_Producto">
+                                                        <button type="submit" class="btn btn-success text-white mt-2"
+                                                            name="accion" value="borrar">
                                                             <i class="fas fa-times"></i>
                                                         </button>
                                                     </form>
                                                 <?php } ?>
                                                 <!-- ¡La visión de futuro! Botón para ver la imagen en grande -->
-                                                <li><a class="btn btn-success text-white mt-2" href="<?php echo $fila["imagen"] ?>" target="_blank"><i class="far fa-eye"></i></a></li>
+                                                <li><a class="btn btn-success text-white mt-2"
+                                                        href="<?php echo $fila["imagen"] ?>" target="_blank"><i
+                                                            class="far fa-eye"></i></a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -416,8 +491,9 @@
                                             </strong>
                                         </p>
                                         <!-- Selección de cantidad para añadir al carrito -->
-                                        <form method="post" action="" class="mt-3">
-                                            <input type="hidden" value="<?php echo $fila["idProducto"]; ?>" name="id_Producto">
+                                        <form method="POST" action="" class="mt-3">
+                                            <input type="hidden" value="<?php echo $fila["idProducto"]; ?>"
+                                                name="id_Producto">
                                             <label for="cantidad">Cantidad:</label>
                                             <select name="cantidad" id="cantidad">
                                                 <?php
@@ -427,14 +503,15 @@
                                                 }
                                                 ?>
                                             </select>
-                                            <button type="submit" class="btn btn-success text-white mt-2" name="accion" value="aniadir">
+                                            <button type="submit" class="btn btn-success text-white mt-2" name="accion"
+                                                value="aniadir">
                                                 <i class="fas fa-cart-plus"></i> Añadir al carrito
                                             </button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
-                        <?php
+                            <?php
                         }
                         ?>
                     </div>
@@ -470,7 +547,8 @@
 
                         <!--Carousel Wrapper-->
                         <div class="col">
-                            <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example" data-bs-ride="carousel">
+                            <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example"
+                                data-bs-ride="carousel">
                                 <!--Slides-->
                                 <div class="carousel-inner product-links-wap" role="listbox">
 
@@ -478,16 +556,20 @@
                                     <div class="carousel-item active">
                                         <div class="row">
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/Xbox.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/Xbox.png"
+                                                        alt="Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/PS5.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/PS5.png"
+                                                        alt="Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/cine.png" alt=" Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/cine.png"
+                                                        alt=" Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/ramen.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/ramen.png"
+                                                        alt="Brand Logo"></a>
                                             </div>
                                         </div>
                                     </div>
@@ -497,16 +579,20 @@
                                     <div class="carousel-item">
                                         <div class="row">
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/brand_01.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img"
+                                                        src="assets/img/brand_01.png" alt="Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/brand_02.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img"
+                                                        src="assets/img/brand_02.png" alt="Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/brand_03.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img"
+                                                        src="assets/img/brand_03.png" alt="Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/brand_04.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img"
+                                                        src="assets/img/brand_04.png" alt="Brand Logo"></a>
                                             </div>
                                         </div>
                                     </div>
@@ -586,24 +672,29 @@
                 <div class="col-auto me-auto">
                     <ul class="list-inline text-left footer-icons">
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
+                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img
+                                    class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
                         </li>
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"></a>
+                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img"
+                                    src="assets/img/insta.png" alt="Brand Logo"></a>
                         </li>
                         <li class="list-inline-item border border-light rounded-circle text-center">
                             <!-- NO MIRAR 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない -->
-                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"></a>
+                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img"
+                                    src="assets/img/twitter.png" alt="Brand Logo"></a>
                         </li>
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo"></a>
+                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img"
+                                    src="assets/img/git.png" alt="Brand Logo"></a>
                         </li>
                     </ul>
                 </div>
                 <div class="col-auto">
                     <label class="sr-only" for="subscribeEmail">Email address</label>
                     <div class="input-group mb-2">
-                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email">
+                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
+                            placeholder="Email">
                         <div class="input-group-text btn-success text-light">Subscribirse</div>
                     </div>
                 </div>

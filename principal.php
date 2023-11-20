@@ -20,6 +20,7 @@
     <!-- Cargamos los requires necesarios de PhP-->
     <?php require 'objetos/producto.php' ?>
     <?php require 'funciones/base_datos_tienda.php' ?>
+    <?php require 'funciones/depurar.php' ?>
 
 </head>
 
@@ -95,7 +96,7 @@
                     <img src="assets/img/estrella.gif" alt="" width="35px">
                 <?php } else { ?>
                     Bienvenido <br>
-                    <?php echo $usuario; ?>
+                    <?php echo htmlspecialchars($usuario); ?>
                 <?php } ?>
             </a>
 
@@ -118,7 +119,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="productos.php">Tienda</a>
                         </li>
-                        
+
                         <!-- Solo cuando se es administrador, puedes entrar en la parte de registrar productos -->
                         <?php
                         if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "admin") { ?>
@@ -126,7 +127,7 @@
                                 <a class="nav-link" href="crear_producto.php">Registrar productos</a>
                             </li>
                         <?php } ?>
-                        
+
                         <li class="nav-item">
                             <a class="nav-link" href="cerrar_sesion.php">Cerrar Sesion</a>
                         </li>
@@ -145,13 +146,16 @@
                         data-bs-target="#templatemo_search">
                         <i class="fa fa-fw fa-search text-dark mr-2"></i>
                     </a>
-                    <a class="nav-icon position-relative text-decoration-none" href="pedido.php">
-                        <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span
-                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
-                            <?php echo $totalProductosEnCesta; ?>
-                        </span>
-                    </a>
+                    <?php
+                    if (isset($_SESSION["rol"]) && ($_SESSION["rol"] == "admin" || $_SESSION["rol"] == "cliente")) { ?>
+                        <a class="nav-icon position-relative text-decoration-none" href="pedido.php">
+                            <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
+                            <span
+                                class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
+                                <?php echo $totalProductosEnCesta; ?>
+                            </span>
+                        </a>
+                    <?php } ?>
                     <a class="nav-icon position-relative text-decoration-none" href="#">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>
                     </a>

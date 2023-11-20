@@ -40,26 +40,8 @@
         $temp_descripcion = depurar($_POST["descripcion"]);
         $temp_cantidad = depurar($_POST["cantidad"]);
 
-
-        // # Imagen
-        // $maxSize = 2097152; //2mb
-        // $nombre_imagen = $_FILES["imagen"]["name"];
-        // $ruta_temporal = $_FILES["imagen"]["tmp_name"];
-    
-        // if ($_FILES["imagen"]["size"] < $maxSize) {
-    
-        //     if ($_FILES["imagen"]["type"] == "image/jpg" || $_FILES["imagen"]["type"] == "image/png" || $_FILES["imagen"]["type"] == "image/jpeg") {
-        //         $ruta_final = "img/" . $nombre_imagen;
-        //         move_uploaded_file($ruta_temporal, $ruta_final);
-        //     } else {
-        //         echo '<h2 class="container">El tipo de la imagen no esta permitido, solo JPG,PNG ó JPEG</h2>';
-        //     }
-        // } else {
-        //     echo "<h2>La imagen es demasiado grande</h2>";
-        // }
-    
         # Imagen
-        $maxSize = 2097152; //2mb
+        $maxSize = 1048576; //1mb
         $nombre_imagen = $_FILES["imagen"]["name"];
         $ruta_temporal = $_FILES["imagen"]["tmp_name"];
 
@@ -74,9 +56,6 @@
         } else {
             $err_imagen = '<h2>La imagen es demasiado grande</h2>';
         }
-
-
-
 
         #Validación de nombre
         if (strlen($temp_nombre) == 0) {
@@ -135,7 +114,7 @@
             }
         }
     }
-    
+
     ?>
     <!-- Start NAV -->
     <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
@@ -185,8 +164,8 @@
                     <img src="assets/img/estrella.gif" alt="" width="35px">
                 <?php } else { ?>
                     Bienvenido <br>
-                    <?php echo $usuario;
-                } ?>
+                    <?php echo htmlspecialchars($usuario); ?>
+                <?php } ?>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
