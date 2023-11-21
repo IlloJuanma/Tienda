@@ -15,7 +15,8 @@
 
 
     <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
     <!-- Cargamos los requires necesarios de PHP-->
     <?php require 'funciones/depurar.php' ?>
@@ -28,6 +29,18 @@
     <?php
     //Iniciamos sesión
     session_start();
+    $usuario = isset($_SESSION["usuario"]) ? $_SESSION["usuario"] : "Invitado";
+    // Consultamos la cantidad total de productos en la cesta del usuario actual
+    $sqlCantidadCesta =
+        "SELECT SUM(cantidad) as totalProductos FROM productosCestas pc
+     INNER JOIN cestas c ON pc.idCesta = c.idCesta
+     WHERE c.usuario = '$usuario'";
+
+    $resultadoCantidadCesta = $conexion->query($sqlCantidadCesta);
+
+    // Obtenemos la cantidad total
+    $totalProductosEnCesta = $resultadoCantidadCesta->fetch_assoc()["totalProductos"];
+
 
     //Si no eres admin NO PUEDES PASAR!!! SOY SIERVO DEL FUEGO SECRETO, ADMINISTRADOR DE LA LLAMA DE ANOR, EL FUEGO OSCURO NO TE SERVIRÁ DE NADA, LLAMA DE UDÛN!!!
     if ($_SESSION["rol"] != "admin") {
@@ -119,103 +132,11 @@
 
     ?>
     <!-- Start NAV -->
-    <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
-        <div class="container text-light">
-            <div class="w-100 d-flex justify-content-between">
-                <div>
-                    <i class="fa fa-envelope mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">IlloJuanma@gmail.com</a>
-                    <i class="fa fa-phone mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">050-254-6399</a>
-                </div>
-                <div>
-                    <!-- Sigueme :D -->
-                    <a href="https://steamcommunity.com/profiles/76561198093473164">
-                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo" style="width: 30px;">
-                    </a>
-                    <!-- Sigueme :D -->
-                    <a href="https://www.instagram.com/juanma_rodrguez/">
-                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo" style="width: 30px;">
-                    </a>
-                    <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
-                    <a href="https://twitter.com/MrFlexaverde">
-                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo" style="width: 30px;">
-                    </a>
-                    <!-- Sigueme :D -->
-                    <a href="https://github.com/IlloJuanma">
-                        <img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo" style="width: 30px;">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <?php require_once 'nav.php'; ?>
     <!-- Cierre NAV -->
 
     <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-light shadow">
-        <div class="container d-flex justify-content-between align-items-center">
-
-            <a class="navbar-brand text-success logo h1 align-self-center" href="index.html">
-                <!-- De de esta forma controlamos un mensaje de bienvenida personalizado para el administrador.
-                     Sino, el mensaje de bienvenida es normalito para el usuario "normi" -->
-                <?php
-                if ($_SESSION["rol"] == "admin") { ?>
-                    <img src="assets/img/estrella.gif" alt="" width="35px">
-                    Bienvenido <br>
-                    <strong>Satoru-Sama </strong>
-                    <img src="assets/img/estrella.gif" alt="" width="35px">
-                <?php } else { ?>
-                    Bienvenido <br>
-                    <!-- Controlamos el nombre usando la función depurar por si el usuario pone un nombre extraño, aunque ya esta controlado en Registrar
-                         usuario pero por si acaso -->
-                    <?php echo htmlspecialchars($usuario); ?>
-                <?php } ?>
-            </a>
-
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <!-- Lista de navigacion a diferentes partes de la tienda -->
-            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
-                <div class="flex-fill">
-                    <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="principal.php">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="sobreMi.php">Sobre Mi</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="productos.php">Tienda</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="cerrar_sesion.php">Cerrar Sesion</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="navbar align-self-center d-flex">
-                    <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
-                            <div class="input-group-text">
-                                <i class="fa fa-fw fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
-                        <i class="fa fa-fw fa-search text-dark mr-2"></i>
-                    </a>
-                    <a class="nav-icon position-relative text-decoration-none" href="#">
-                        <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                    </a>
-                    <a class="nav-icon position-relative text-decoration-none" href="#">
-                        <i class="fa fa-fw fa-user text-dark mr-3"></i>
-                    </a>
-                </div>
-            </div>
-
-        </div>
-    </nav>
+    <?php require_once 'header.php' ?>
     <!-- Close Header -->
     <section class="bg-success py-5">
         <div class="container">
@@ -257,22 +178,26 @@
                 </div>
             </legend>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Nombre <img src="assets/img/nombre.gif" alt="imagen" width="45px"></label>
+                <label class="form-label fs-5">Nombre <img src="assets/img/nombre.gif" alt="imagen"
+                        width="45px"></label>
                 <input type="text" class="form-control fs-5" name="nombre" required>
 
             </div>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Precio <img src="assets/img/precio.gif" alt="imagen" width="45px"></label>
+                <label class="form-label fs-5">Precio <img src="assets/img/precio.gif" alt="imagen"
+                        width="45px"></label>
                 <input type="text" class="form-control fs-5" name="precio" required>
 
             </div>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Descripción <img src="assets/img/descripcion.gif" alt="imagen" width="45px"></label>
+                <label class="form-label fs-5">Descripción <img src="assets/img/descripcion.gif" alt="imagen"
+                        width="45px"></label>
                 <input type="text" class="form-control fs-5" name="descripcion">
 
             </div>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Cantidad <img src="assets/img/cantidad.gif" alt="imagen" width="45px"></label>
+                <label class="form-label fs-5">Cantidad <img src="assets/img/cantidad.gif" alt="imagen"
+                        width="45px"></label>
                 <input type="text" class="form-control fs-5" name="cantidad">
 
             </div>
@@ -331,95 +256,7 @@
     }
     ?>
     <!-- Footer -->
-    <footer class="bg-dark" id="tempaltemo_footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 pt-5">
-                    <h2 class="h2 text-success border-bottom pb-3 border-light logo">Satoru no kōnā</h2>
-                    <ul class="list-unstyled text-light footer-link-list">
-                        <li>
-                            <i class="fas fa-map-marker-alt fa-fw"></i>
-                            Calle falsa 123
-                        </li>
-                        <li>
-                            <i class="fa fa-phone fa-fw"></i>
-                            <a class="text-decoration-none" href="tel:010-020-0340">056-555-5149</a>
-                        </li>
-                        <li>
-                            <i class="fa fa-envelope fa-fw"></i>
-                            <a class="text-decoration-none" href="mailto:info@company.com">IlloJuanma@gmail.com</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Lista del footer -->
-                <div class="col-md-4 pt-5">
-                    <h2 class="h2 text-light border-bottom pb-3 border-light">Productos</h2>
-                    <ul class="list-unstyled text-light footer-link-list">
-                        <li><a class="text-decoration-none" href="#">Anime</a></li>
-                        <li><a class="text-decoration-none" href="#">Videojuegos</a></li>
-                        <li><a class="text-decoration-none" href="#">Cine</a></li>
-                        <li><a class="text-decoration-none" href="#">Ropa de marca</a></li>
-                        <li><a class="text-decoration-none" href="#">Merch</a></li>
-                        <li><a class="text-decoration-none" href="#">Posters</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 pt-5">
-                    <h2 class="h2 text-light border-bottom pb-3 border-light">Info</h2>
-                    <ul class="list-unstyled text-light footer-link-list">
-                        <li><a class="text-decoration-none" href="principal.php">Inicio</a></li>
-                        <li><a class="text-decoration-none" href="sobreMi.php">Sobre Mi</a></li>
-                        <li><a class="text-decoration-none" href="#">FAQs</a></li>
-                        <li><a class="text-decoration-none" href="#">Contacto</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="row text-light mb-4">
-                <div class="col-12 mb-3">
-                    <div class="w-100 my-3 border-top border-light"></div>
-                </div>
-                <div class="col-auto me-auto">
-                    <ul class="list-inline text-left footer-icons">
-                        <!-- Sigueme :D -->
-                        <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
-                        </li>
-                        <!-- Sigueme :D -->
-                        <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"></a>
-                        </li>
-                        <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
-                        <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"></a>
-                        </li>
-                        <!-- Sigueme :D -->
-                        <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo"></a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-auto">
-                    <label class="sr-only" for="subscribeEmail">Email address</label>
-                    <div class="input-group mb-2">
-                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email">
-                        <div class="input-group-text btn-success text-light">Subscribirse</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="w-100 bg-black py-3">
-            <div class="container">
-                <div class="row pt-2">
-                    <div class="col-12">
-                        <p class="text-left text-light">
-                            Copyright &copy; 2023 Satoru Company. All rights reserved
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php require_once 'footer.php'; ?>
     <!-- End Footer -->
 
     <!-- Start Script -->

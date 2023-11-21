@@ -14,7 +14,8 @@
     <link rel="stylesheet" href="assets/css/custom.css">
 
     <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
     <!-- Cargamos los requires necesarios de PhP-->
     <?php require 'objetos/producto.php' ?>
@@ -39,7 +40,7 @@
 
     // Obtenemos la cantidad total
     $totalProductosEnCesta = $resultadoCantidadCesta->fetch_assoc()["totalProductos"]; //Esto se usará para mostrarlo en pantalla junto al carro de la cesta
-
+    
     // Obtengo el idCestas y la cantidad del usuario actual
     $sqlCesta = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
     $resultadoCestas = $conexion->query($sqlCesta);
@@ -51,16 +52,39 @@
 
     // Si hay usuario registrado (ya sea como admin o usuario no como invitado CUIDADO OJO GASTEN CUIDAO!!)
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION["usuario"])) {
+        // Vaciar la cesta antes de realizar el pedido si se hace clic en el botón "Vaciar cesta"
+        if (isset($_POST["vaciar_cesta"])) {
+            // Obtén la cantidad de cada producto en la cesta
+            $sqlCantidadProductosCesta = "SELECT idProducto, cantidad FROM productosCestas WHERE idCesta = '$idCesta'";
+            $resultadoCantidadProductosCesta = $conexion->query($sqlCantidadProductosCesta);
+
+            while ($filaCantidad = $resultadoCantidadProductosCesta->fetch_assoc()) {
+                $idProducto = $filaCantidad["idProducto"];
+                $cantidadProducto = $filaCantidad["cantidad"];
+
+                // Suma la cantidad de cada producto a la cantidad total de productos
+                $sqlSumarCantidad = "UPDATE productos SET cantidad = cantidad + '$cantidadProducto' WHERE idProducto = '$idProducto'";
+                $conexion->query($sqlSumarCantidad);
+            }
+
+            // Vacía la cesta
+            $sqlVaciarCesta = "DELETE FROM productosCestas WHERE idCesta = '$idCesta'";
+            $conexion->query($sqlVaciarCesta);
+
+            // Redirige para evitar reenvío del formulario al actualizar la página
+            header("location: productos.php");
+            exit();
+        }
+
         // Insertar en la tabla Pedidos
         $sqlInsertarPedido = "INSERT INTO pedidos (usuario) VALUES ('$usuario')";
+
         //Si la conexión se realiza con éxito
         if ($conexion->query($sqlInsertarPedido)) {
 
             // Obtener el idPedido recién insertado ()
             $idPedido = $conexion->insert_id;
 
-            // Inicializo el contador a 1 para empezar el bucle for de abajo, pero algo no funciona bien...mmm... Omoshiroi....
-            $contador = 1;
 
             // Obtener productos de la cesta no me preguntes esta parte alejandra que e molto difficile
             $sqlPedido = "SELECT p.idProducto AS idProducto,
@@ -71,22 +95,27 @@
                           WHERE idCesta ='$idCesta'";
             $resultado = $conexion->query($sqlPedido);
 
+            // Inicializo el contador a 1 para empezar el bucle for de abajo, pero algo no funciona bien...mmm... Omoshiroi....
+            $contador = 1;
+
             // Insertar en la tabla lineasPedidos
-            for ($contador = 1; $fila = $resultado->fetch_assoc(); $contador++) {
+            while ($fila = $resultado->fetch_assoc()) {
                 $idProducto = $fila["idProducto"];
                 $precioUnitario = $fila["precio"];
                 $cantidad = $fila["cantidad"];
 
                 // Insertar en la tabla lineasPedidos
                 $sqlInsertLineaPedido = "INSERT INTO lineasPedidos (lineaPedido, idPedido, idProducto, precioUnitario, cantidad)
-                                    VALUES ('$contador', '$idPedido', '$idProducto', '$precioUnitario', '$cantidad')";
+                                         VALUES ('$contador','$idPedido', '$idProducto', '$precioUnitario', '$cantidad')";
+                // Ejecutamos la consulta
                 if ($conexion->query($sqlInsertLineaPedido)) {
                     // Si todo ha ido bien mostramos mensaje de exito
                     $mensajeExito = "Pedido realizado con éxito. ID del pedido: $idPedido";
                 } else {
                     // Si hay errores al insertar la línea de pedido mostramos mensaje :(
-                    $mensajeError = "Error al insertar la línea de pedido.";
+                    $mensajeError = "Error al insertar la línea de pedido." . $conexion->error;
                 }
+                $contador++;
             }
 
             // Actualizamos el precio total en la tabla pedidos, por si hemos añadido más productos, somos ricos ya sabe
@@ -104,117 +133,14 @@
     ?>
 
     <!-- Start NAV -->
-    <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
-        <div class="container text-light">
-            <div class="w-100 d-flex justify-content-between">
-                <div>
-                    <i class="fa fa-envelope mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">IlloJuanma@gmail.com</a>
-                    <i class="fa fa-phone mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">050-254-6399</a>
-                </div>
-                <div>
-                    <!-- Sigueme :D -->
-                    <a href="https://steamcommunity.com/profiles/76561198093473164">
-                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo" style="width: 30px;">
-                    </a>
-                    <!-- Sigueme :D -->
-                    <a href="https://www.instagram.com/juanma_rodrguez/">
-                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo" style="width: 30px;">
-                    </a>
-                    <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
-                    <a href="https://twitter.com/MrFlexaverde">
-                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo" style="width: 30px;">
-                    </a>
-                    <!-- Sigueme :D -->
-                    <a href="https://github.com/IlloJuanma">
-                        <img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo" style="width: 30px;">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <?php require_once 'nav.php'; ?>
     <!-- Cierre NAV -->
-    
     <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-light shadow">
-        <div class="container d-flex justify-content-between align-items-center">
-
-            <a class="navbar-brand text-success logo h1 align-self-center" href="index.html">
-                <!-- De de esta forma controlamos un mensaje de bienvenida personalizado para el administrador.
-                     Sino, el mensaje de bienvenida es normalito para el usuario "standar" -->
-                <!-- Verifica si la clave "rol" está definida en la sesión antes de intentar acceder a ella -->
-                <?php
-                if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "admin") { ?>
-                    <img src="assets/img/estrella.gif" alt="" width="35px">
-                    Bienvenido <br>
-                    <strong>Satoru-Sama </strong>
-                    <img src="assets/img/estrella.gif" alt="" width="35px">
-                <?php } else { ?>
-                    Bienvenido <br>
-                    <?php echo htmlspecialchars($usuario); ?>
-                <?php } ?>
-            </a>
-
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
-                <div class="flex-fill">
-                    <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="principal.php">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="sobreMi.php">Sobre Mi</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="productos.php">Tienda</a>
-                        </li>
-
-                        <!-- Solo cuando se es administrador, puedes entrar en la parte de registrar productos -->
-                        <?php
-                        if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "admin") { ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="crear_producto.php">Registrar productos</a>
-                            </li>
-                        <?php } ?>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="cerrar_sesion.php">Cerrar Sesion</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="navbar align-self-center d-flex">
-                    <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
-                            <div class="input-group-text">
-                                <i class="fa fa-fw fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
-                        <i class="fa fa-fw fa-search text-dark mr-2"></i>
-                    </a>
-                    <a class="nav-icon position-relative text-decoration-none" href="#">
-                        <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
-                            <?php echo $totalProductosEnCesta; ?>
-                        </span>
-                    </a>
-                    <a class="nav-icon position-relative text-decoration-none" href="#">
-                        <i class="fa fa-fw fa-user text-dark mr-3"></i>
-                    </a>
-                </div>
-            </div>
-
-        </div>
-    </nav>
+    <?php require_once 'header.php' ?>
     <!-- Cierre Header -->
     <!-- Modal -->
-    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="w-100 pt-1 mb-5 text-right">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -256,9 +182,9 @@
                     <table class="table table-hover table-primary">
                         <thead class="table-dark">
                             <tr>
-                                <th>Id del Producto</th>
-                                <th>Id de la cesta</th>
+                                <th>Nombre</th>
                                 <th>Imagen</th>
+                                <th>Precio Unidad</th>
                                 <th>Cantidad a comprar</th>
                             </tr>
                         </thead>
@@ -266,12 +192,9 @@
                             <?php foreach ($productoCesta as $producto) { ?>
                                 <tr>
                                     <td class="align-middle">
-                                        <?php echo $producto->idProducto ?>
-                                    </td>
-                                    <td class="align-middle">
                                         <?php
                                         //Para obtener el nombre del producto en lugar del id de la cesta...
-                                        $idProducto = $producto->idProducto; //Extraemos el ID del producto del objeto actual para usarlo en la consula SQL
+                                        $idProducto = $producto->idProducto; //Extraemos el ID del producto del objeto actual para usarlo en la consula SQL de abajo
                                         $sqlNombreProducto = "SELECT nombreProducto FROM productos WHERE idProducto ='$idProducto'";
                                         $resultadoNombreProducto = $conexion->query($sqlNombreProducto);
                                         $nombreProducto = $resultadoNombreProducto->fetch_assoc()["nombreProducto"];
@@ -281,12 +204,23 @@
                                     <td>
                                         <?php
                                         //Para obtener la imagen del producto...
-                                        $idProducto = $producto->idProducto; //Extraemos el ID del producto del objeto actual para usarlo en la consula SQL
+                                        $idProducto = $producto->idProducto; //Extraemos el ID del producto del objeto actual para usarlo en la consula SQL de abajo
                                         $sqlImagenProducto = "SELECT imagen FROM productos WHERE idProducto ='$idProducto'";
                                         $resultadoImagenProducto = $conexion->query($sqlImagenProducto);
                                         $imagenProducto = $resultadoImagenProducto->fetch_assoc()["imagen"];
                                         echo "<img src='$imagenProducto' alt='Imagen del producto' style='width: 100px;'>";
                                         ?>
+                                    </td>
+                                    <td class="align-middle">
+                                        <?php
+                                        //Para obtener el precio del producto...
+                                        $idProducto = $producto->idProducto; //Extraemos el ID del producto del objeto actual para usarlo en la consula SQL de abajo
+                                        $sqlPrecioProducto = "SELECT precio FROM productos WHERE idProducto ='$idProducto'";
+                                        $resultadoPrecioProducto = $conexion->query($sqlPrecioProducto);
+                                        $precioProducto = $resultadoPrecioProducto->fetch_assoc()["precio"];
+                                        echo $precioProducto;
+                                        ?>
+                                        €
                                     </td>
                                     <td class="align-middle">
                                         <?php echo $producto->cantidad ?>
@@ -295,13 +229,33 @@
                             <?php } ?>
                         </tbody>
                         <tfoot class="text-center">
-                            <td colspan="4">
-                                <form action="" method="POST">
-                                    <button type="submit" class="btn btn-success text-white mt-2" value="comprar">
-                                        <i class="fas fa-cart-plus"></i>Realizar pedido
-                                    </button>
-                                </form>
-                            </td>
+                            <!-- Vamos a comprobar si hay articulos en la cesta, para ellos hacemos un count del total de productos en productosCestas
+                                 si hay mas de uno nos sale el boton de realizar pedido, sino nos sale un texto alternativo -->
+                            <?php
+                            $cantidadCesta = "SELECT COUNT(*) AS totalProductos FROM productosCestas WHERE idCesta = '$idCesta'";
+                            $resultadoCantidadCesta = $conexion->query($cantidadCesta);
+                            $totalProductosEnCesta = $resultadoCantidadCesta->fetch_assoc()["totalProductos"];
+                            if ($totalProductosEnCesta > 0) { ?>
+                                <td colspan="2">
+                                    <form action="" method="POST">
+                                        <button type="submit" class="btn btn-success text-white mt-2" value="comprar">
+                                            <i class="fas fa-cart-plus"></i>Realizar pedido
+                                        </button>
+                                    </form>
+                                </td>
+                                <td colspan="2">
+                                    <form action="" method="POST">
+                                        <button type="submit" class="btn btn-danger text-white mt-2" name="vaciar_cesta"
+                                            value="vaciar">
+                                            <i class="fas fa-trash"></i>Vaciar cesta
+                                        </button>
+                                    </form>
+                                </td>
+                            <?php } else { ?>
+                                <td colspan="4">
+                                    No hay artículos en la cesta
+                                </td>
+                            <?php } ?>
                         </tfoot>
                     </table>
                     <div class="container mt-4">
@@ -324,99 +278,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-dark" id="tempaltemo_footer">
-        <div class="container">
-            <div class="row">
-
-                <div class="col-md-4 pt-5">
-                    <h2 class="h2 text-success border-bottom pb-3 border-light logo">Satoru no kōnā</h2>
-                    <ul class="list-unstyled text-light footer-link-list">
-                        <li>
-                            <i class="fas fa-map-marker-alt fa-fw"></i>
-                            <!-- Es de verdad eh... -->
-                            Calle falsa 123
-                        </li>
-                        <li>
-                            <i class="fa fa-phone fa-fw"></i>
-                            <a class="text-decoration-none" href="tel:010-020-0340">056-555-5149</a>
-                        </li>
-                        <li>
-                            <i class="fa fa-envelope fa-fw"></i>
-                            <a class="text-decoration-none" href="mailto:info@company.com">IlloJuanma@gmail.com</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="col-md-4 pt-5">
-                    <h2 class="h2 text-light border-bottom pb-3 border-light">Productos</h2>
-                    <ul class="list-unstyled text-light footer-link-list">
-                        <li><a class="text-decoration-none" href="#">Anime</a></li>
-                        <li><a class="text-decoration-none" href="#">Videojuegos</a></li>
-                        <li><a class="text-decoration-none" href="#">Cine</a></li>
-                        <li><a class="text-decoration-none" href="#">Ropa de marca</a></li>
-                        <li><a class="text-decoration-none" href="#">Merch</a></li>
-                        <li><a class="text-decoration-none" href="#">Posters</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-md-4 pt-5">
-                    <h2 class="h2 text-light border-bottom pb-3 border-light">Info</h2>
-                    <ul class="list-unstyled text-light footer-link-list">
-                        <li><a class="text-decoration-none" href="principal.php">Inicio</a></li>
-                        <li><a class="text-decoration-none" href="sobreMi.php">Sobre Mi</a></li>
-                        <li><a class="text-decoration-none" href="#">FAQs</a></li>
-                        <li><a class="text-decoration-none" href="#">Contacto</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Redes sociales, en este caso si que son de verdad, en serio, son los mios, échale un vistazo. Al twitter no porfa, es un pozo de locura -->
-            <div class="row text-light mb-4">
-                <div class="col-12 mb-3">
-                    <div class="w-100 my-3 border-top border-light"></div>
-                </div>
-                <div class="col-auto me-auto">
-                    <ul class="list-inline text-left footer-icons">
-                        <!-- Sigueme :D -->
-                        <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
-                        </li>
-                        <!-- Sigueme :D -->
-                        <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"></a>
-                        </li>
-                        <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
-                        <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"></a>
-                        </li>
-                        <!-- Sigueme :D -->
-                        <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo"></a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-auto">
-                    <label class="sr-only" for="subscribeEmail">Email address</label>
-                    <div class="input-group mb-2">
-                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email">
-                        <div class="input-group-text btn-success text-light">Subscribirse</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="w-100 bg-black py-3">
-            <div class="container">
-                <div class="row pt-2">
-                    <div class="col-12">
-                        <p class="text-left text-light">
-                            Copyright &copy; 2023 Satoru Company. All rights reserved
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php require_once 'footer.php'; ?>
     <!-- End Footer -->
 
     <!-- Start Script -->
