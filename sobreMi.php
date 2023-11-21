@@ -14,8 +14,7 @@
     <link rel="stylesheet" href="assets/css/custom.css">
 
     <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
     <?php require 'objetos/producto.php' ?>
     <?php require 'funciones/base_datos_tienda.php' ?>
@@ -47,24 +46,24 @@
             <div class="w-100 d-flex justify-content-between">
                 <div>
                     <i class="fa fa-envelope mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none"
-                        href="mailto:info@company.com">IlloJuanma@gmail.com</a>
+                    <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">IlloJuanma@gmail.com</a>
                     <i class="fa fa-phone mx-2"></i>
                     <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">050-254-6399</a>
                 </div>
                 <div>
+                    <!-- Sigueme :D -->
                     <a href="https://steamcommunity.com/profiles/76561198093473164">
-                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Sigueme :D -->
                     <a href="https://www.instagram.com/juanma_rodrguez/">
-                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
                     <a href="https://twitter.com/MrFlexaverde">
-                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Sigueme :D -->
                     <a href="https://github.com/IlloJuanma">
                         <img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo" style="width: 30px;">
                     </a>
@@ -95,14 +94,11 @@
                 <?php } ?>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
-                id="templatemo_main_nav">
+            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
                 <div class="flex-fill">
                     <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
                         <li class="nav-item">
@@ -135,16 +131,14 @@
                             </div>
                         </div>
                     </div>
-                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
-                        data-bs-target="#templatemo_search">
+                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                         <i class="fa fa-fw fa-search text-dark mr-2"></i>
                     </a>
                     <?php
                     if (isset($_SESSION["rol"]) && ($_SESSION["rol"] == "admin" || $_SESSION["rol"] == "cliente")) { ?>
                         <a class="nav-icon position-relative text-decoration-none" href="pedido.php">
                             <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                            <span
-                                class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
+                            <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
                                 <?php echo $totalProductosEnCesta; ?>
                             </span>
                         </a>
@@ -160,8 +154,7 @@
     <!-- Close Header -->
 
     <!-- Modal -->
-    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="w-100 pt-1 mb-5 text-right">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -182,8 +175,7 @@
             <div class="row align-items-center py-5">
                 <div class="col-md-8 text-white">
 
-                    <h1><img src="assets/img/tori.gif" alt="tori" width="50px"> Satoru no kōnā <img
-                            src="assets/img/tori.gif" alt="tori" width="50px"></h1>
+                    <h1><img src="assets/img/tori.gif" alt="tori" width="50px"> Satoru no kōnā <img src="assets/img/tori.gif" alt="tori" width="50px"></h1>
                     <p>
                         ¡Bienvenidos a <strong>Satoru no kōnā</strong>! Soy <em>Satoru</em>, el amante apasionado de la
                         cultura japonesa detrás de esta colorida esquina virtual. Mi rincón es más que una tienda en
@@ -219,8 +211,7 @@
     <section class="container py-5">
         <div class="row text-center pt-5 pb-3">
             <div class="col-lg-6 m-auto">
-                <h1><img src="assets/img/fuji.gif" alt="fuji" width="50px"> Watashi no sābisu <img
-                        src="assets/img/fuji2.gif" alt="fuji" width="50px"></h1>
+                <h1><img src="assets/img/fuji.gif" alt="fuji" width="50px"> Watashi no sābisu <img src="assets/img/fuji2.gif" alt="fuji" width="50px"></h1>
                 <p>
                     Descubre la atención excepcional las <strong>24 horas</strong> en <strong>Satoru no kōnā</strong>.
                     Aprovecha nuestras <em>promociones irresistibles</em> y disfruta de envíos rápidos a todo el mundo.
@@ -287,8 +278,7 @@
 
                         <!--Carousel Wrapper-->
                         <div class="col">
-                            <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example"
-                                data-bs-ride="carousel">
+                            <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example" data-bs-ride="carousel">
                                 <!--Slides-->
                                 <div class="carousel-inner product-links-wap" role="listbox">
 
@@ -296,20 +286,16 @@
                                     <div class="carousel-item active">
                                         <div class="row">
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/Xbox.png"
-                                                        alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/Xbox.png" alt="Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/PS5.png"
-                                                        alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/PS5.png" alt="Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/cine.png"
-                                                        alt=" Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/cine.png" alt=" Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/ramen.png"
-                                                        alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/ramen.png" alt="Brand Logo"></a>
                                             </div>
                                         </div>
                                     </div>
@@ -319,20 +305,16 @@
                                     <div class="carousel-item">
                                         <div class="row">
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img"
-                                                        src="assets/img/brand_01.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/brand_01.png" alt="Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img"
-                                                        src="assets/img/brand_02.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/brand_02.png" alt="Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img"
-                                                        src="assets/img/brand_03.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/brand_03.png" alt="Brand Logo"></a>
                                             </div>
                                             <div class="col-3 p-md-5">
-                                                <a href="#"><img class="img-fluid brand-img"
-                                                        src="assets/img/brand_04.png" alt="Brand Logo"></a>
+                                                <a href="#"><img class="img-fluid brand-img" src="assets/img/brand_04.png" alt="Brand Logo"></a>
                                             </div>
                                         </div>
                                     </div>
@@ -413,30 +395,28 @@
                 </div>
                 <div class="col-auto me-auto">
                     <ul class="list-inline text-left footer-icons">
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img
-                                    class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
+                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img"
-                                    src="assets/img/insta.png" alt="Brand Logo"></a>
+                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <!-- NO MIRAR 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない -->
-                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img"
-                                    src="assets/img/twitter.png" alt="Brand Logo"></a>
+                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img"
-                                    src="assets/img/git.png" alt="Brand Logo"></a>
+                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo"></a>
                         </li>
                     </ul>
                 </div>
                 <div class="col-auto">
                     <label class="sr-only" for="subscribeEmail">Email address</label>
                     <div class="input-group mb-2">
-                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
-                            placeholder="Email">
+                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email">
                         <div class="input-group-text btn-success text-light">Subscribirse</div>
                     </div>
                 </div>

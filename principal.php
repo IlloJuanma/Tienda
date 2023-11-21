@@ -14,8 +14,7 @@
     <link rel="stylesheet" href="assets/css/custom.css">
 
     <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
     <!-- Cargamos los requires necesarios de PhP-->
     <?php require 'objetos/producto.php' ?>
@@ -52,24 +51,24 @@
             <div class="w-100 d-flex justify-content-between">
                 <div>
                     <i class="fa fa-envelope mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none"
-                        href="mailto:info@company.com">IlloJuanma@gmail.com</a>
+                    <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">IlloJuanma@gmail.com</a>
                     <i class="fa fa-phone mx-2"></i>
                     <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">050-254-6399</a>
                 </div>
                 <div>
+                    <!-- Sigueme :D -->
                     <a href="https://steamcommunity.com/profiles/76561198093473164">
-                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Sigueme :D -->
                     <a href="https://www.instagram.com/juanma_rodrguez/">
-                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
                     <a href="https://twitter.com/MrFlexaverde">
-                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Sigueme :D -->
                     <a href="https://github.com/IlloJuanma">
                         <img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo" style="width: 30px;">
                     </a>
@@ -100,14 +99,11 @@
                 <?php } ?>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
-                id="templatemo_main_nav">
+            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
                 <div class="flex-fill">
                     <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
                         <li class="nav-item">
@@ -142,16 +138,14 @@
                             </div>
                         </div>
                     </div>
-                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
-                        data-bs-target="#templatemo_search">
+                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                         <i class="fa fa-fw fa-search text-dark mr-2"></i>
                     </a>
                     <?php
                     if (isset($_SESSION["rol"]) && ($_SESSION["rol"] == "admin" || $_SESSION["rol"] == "cliente")) { ?>
                         <a class="nav-icon position-relative text-decoration-none" href="pedido.php">
                             <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                            <span
-                                class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
+                            <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
                                 <?php echo $totalProductosEnCesta; ?>
                             </span>
                         </a>
@@ -167,8 +161,7 @@
     <!-- Cierre Header -->
 
     <!-- Modal -->
-    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="w-100 pt-1 mb-5 text-right">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -183,13 +176,9 @@
             </form>
         </div>
     </div>
-
-
-
     <!-- Empieza carrousel -->
     <!-- Creamos un array de cada producto que entre en la base de datos, usando un objeto de ese producto -->
     <!-- Con el while recorremos las filas de la tabla, y mientras haya creara objetos en el array -->
-
     <?php
     $sql = "SELECT * FROM productos";
     $resultado = $conexion->query($sql);
@@ -207,24 +196,25 @@
         array_push($productos, $nuevo_producto);
     }
     ?>
-
     <!-- Mejora del sistema de carrousel para que se muestre adecuadamente NO TOCAAAR!! 重要！！ -->
     <?php
     // Mezcla el arreglo de productos de manera aleatoria, queda más bonito no?
     shuffle($productos);
 
     // Toma los primeros 3 productos después de la mezcla, solo quiero que se muestren 3, no todo. Las grandes fragancias vienen en frascos pequeños :)
+    // array_slice devuelve una copia de una parte del array dentro de un nuevo array empezando por inicio hasta fin (fin no incluido)
     $primeros_tres_productos_aleatorios = array_slice($productos, 0, 3);
     ?>
     <div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">
         <ol class="carousel-indicators">
-            <?php foreach ($primeros_tres_productos_aleatorios as $key => $producto): ?>
-                <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="<?php echo $key; ?>"
-                    class="<?php echo ($key === 0) ? 'active' : ''; ?>"></li>
+
+            <!------------------------------- Iniciamos foreach de los 3 primeros productos ------------------------>
+            <?php foreach ($primeros_tres_productos_aleatorios as $key => $producto) : ?>
+                <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="<?php echo $key; ?>" class="<?php echo ($key === 0) ? 'active' : ''; ?>"></li>
             <?php endforeach; ?>
         </ol>
         <div class="carousel-inner">
-            <?php foreach ($primeros_tres_productos_aleatorios as $key => $producto): ?>
+            <?php foreach ($primeros_tres_productos_aleatorios as $key => $producto) : ?>
                 <div class="carousel-item <?php echo ($key === 0) ? 'active' : ''; ?>">
                     <div class="container">
                         <div class="row p-5">
@@ -248,13 +238,13 @@
                     </div>
                 </div>
             <?php endforeach; ?>
+            <!----------------------------------------- Fin de foreach -------------------------->
+            
         </div>
-        <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel"
-            role="button" data-bs-slide="prev">
+        <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="prev">
             <i class="fas fa-chevron-left"></i>
         </a>
-        <a class="carousel-control-next text-decoration-none w-auto pe-3" href="#template-mo-zay-hero-carousel"
-            role="button" data-bs-slide="next">
+        <a class="carousel-control-next text-decoration-none w-auto pe-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="next">
             <i class="fas fa-chevron-right"></i>
         </a>
     </div>
@@ -274,12 +264,11 @@
             </div>
             <!-- Mostramos los productos, usando un foreach para recorrer el array y de ese producto, mostramos lo que nos interesa -->
             <div class="row">
-                <?php foreach ($primeros_tres_productos_aleatorios as $producto): ?>
+                <?php foreach ($primeros_tres_productos_aleatorios as $producto) : ?>
                     <div class="col-12 col-md-4 mb-4">
                         <div class="card h-100 d-flex flex-column" style="min-height: 350px;">
                             <a href="productos.php">
-                                <img src="<?php echo $producto->imagen; ?>" class="card-img-top h-100" alt="..."
-                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="<?php echo $producto->imagen; ?>" class="card-img-top h-100" alt="..." style="width: 100%; height: 100%; object-fit: cover;">
                             </a>
                             <div class="card-body d-flex flex-column">
                                 <ul class="list-unstyled d-flex justify-content-between mb-2">
@@ -366,30 +355,28 @@
                 </div>
                 <div class="col-auto me-auto">
                     <ul class="list-inline text-left footer-icons">
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img
-                                    class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
+                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img"
-                                    src="assets/img/insta.png" alt="Brand Logo"></a>
+                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <!-- NO MIRAR 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない -->
-                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img"
-                                    src="assets/img/twitter.png" alt="Brand Logo"></a>
+                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img"
-                                    src="assets/img/git.png" alt="Brand Logo"></a>
+                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo"></a>
                         </li>
                     </ul>
                 </div>
                 <div class="col-auto">
                     <label class="sr-only" for="subscribeEmail">Email address</label>
                     <div class="input-group mb-2">
-                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
-                            placeholder="Email">
+                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email">
                         <div class="input-group-text btn-success text-light">Subscribirse</div>
                     </div>
                 </div>

@@ -15,10 +15,9 @@
 
 
     <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
-    <!-- Cargamos los requires necesarios de PhP-->
+    <!-- Cargamos los requires necesarios de PHP-->
     <?php require 'funciones/depurar.php' ?>
     <?php require 'objetos/producto.php' ?>
     <?php require 'funciones/base_datos_tienda.php' ?>
@@ -27,8 +26,10 @@
 
 <body>
     <?php
+    //Iniciamos sesión
     session_start();
 
+    //Si no eres admin NO PUEDES PASAR!!! SOY SIERVO DEL FUEGO SECRETO, ADMINISTRADOR DE LA LLAMA DE ANOR, EL FUEGO OSCURO NO TE SERVIRÁ DE NADA, LLAMA DE UDÛN!!!
     if ($_SESSION["rol"] != "admin") {
         header("Location: login.php");
     }
@@ -41,12 +42,13 @@
         $temp_cantidad = depurar($_POST["cantidad"]);
 
         # Imagen
-        $maxSize = 1048576; //1mb
+        $maxSize = 1048576; //1mb de tamaño maximo
         $nombre_imagen = $_FILES["imagen"]["name"];
         $ruta_temporal = $_FILES["imagen"]["tmp_name"];
 
         if ($_FILES["imagen"]["size"] < $maxSize) {
 
+            //Controlamos el tipo de la imagen
             if ($_FILES["imagen"]["type"] == "image/jpg" || $_FILES["imagen"]["type"] == "image/png" || $_FILES["imagen"]["type"] == "image/jpeg") {
                 $ruta_final = "assets/img/" . $nombre_imagen;
                 move_uploaded_file($ruta_temporal, $ruta_final);
@@ -122,24 +124,24 @@
             <div class="w-100 d-flex justify-content-between">
                 <div>
                     <i class="fa fa-envelope mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none"
-                        href="mailto:info@company.com">IlloJuanma@gmail.com</a>
+                    <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">IlloJuanma@gmail.com</a>
                     <i class="fa fa-phone mx-2"></i>
                     <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">050-254-6399</a>
                 </div>
                 <div>
+                    <!-- Sigueme :D -->
                     <a href="https://steamcommunity.com/profiles/76561198093473164">
-                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Sigueme :D -->
                     <a href="https://www.instagram.com/juanma_rodrguez/">
-                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
                     <a href="https://twitter.com/MrFlexaverde">
-                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Sigueme :D -->
                     <a href="https://github.com/IlloJuanma">
                         <img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo" style="width: 30px;">
                     </a>
@@ -155,7 +157,7 @@
 
             <a class="navbar-brand text-success logo h1 align-self-center" href="index.html">
                 <!-- De de esta forma controlamos un mensaje de bienvenida personalizado para el administrador.
-                     Sino, el mensaje de bienvenida es normalito para el usuario "standar" -->
+                     Sino, el mensaje de bienvenida es normalito para el usuario "normi" -->
                 <?php
                 if ($_SESSION["rol"] == "admin") { ?>
                     <img src="assets/img/estrella.gif" alt="" width="35px">
@@ -164,18 +166,17 @@
                     <img src="assets/img/estrella.gif" alt="" width="35px">
                 <?php } else { ?>
                     Bienvenido <br>
+                    <!-- Controlamos el nombre usando la función depurar por si el usuario pone un nombre extraño, aunque ya esta controlado en Registrar
+                         usuario pero por si acaso -->
                     <?php echo htmlspecialchars($usuario); ?>
                 <?php } ?>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
-                id="templatemo_main_nav">
+            <!-- Lista de navigacion a diferentes partes de la tienda -->
+            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
                 <div class="flex-fill">
                     <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
                         <li class="nav-item">
@@ -201,8 +202,7 @@
                             </div>
                         </div>
                     </div>
-                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
-                        data-bs-target="#templatemo_search">
+                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                         <i class="fa fa-fw fa-search text-dark mr-2"></i>
                     </a>
                     <a class="nav-icon position-relative text-decoration-none" href="#">
@@ -243,7 +243,7 @@
             /* Espacio entre el borde y el texto */
         }
     </style>
-
+    <!-- Sección crear productos -->
     <section class="container my-4">
         <form action="" method="POST" enctype="multipart/form-data" class="row g-3 border p-4 bglight-">
             <legend>
@@ -257,26 +257,22 @@
                 </div>
             </legend>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Nombre <img src="assets/img/nombre.gif" alt="imagen"
-                        width="45px"></label>
+                <label class="form-label fs-5">Nombre <img src="assets/img/nombre.gif" alt="imagen" width="45px"></label>
                 <input type="text" class="form-control fs-5" name="nombre" required>
 
             </div>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Precio <img src="assets/img/precio.gif" alt="imagen"
-                        width="45px"></label>
+                <label class="form-label fs-5">Precio <img src="assets/img/precio.gif" alt="imagen" width="45px"></label>
                 <input type="text" class="form-control fs-5" name="precio" required>
 
             </div>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Descripción <img src="assets/img/descripcion.gif" alt="imagen"
-                        width="45px"></label>
+                <label class="form-label fs-5">Descripción <img src="assets/img/descripcion.gif" alt="imagen" width="45px"></label>
                 <input type="text" class="form-control fs-5" name="descripcion">
 
             </div>
             <div class="mb-4 col-md-6">
-                <label class="form-label fs-5">Cantidad <img src="assets/img/cantidad.gif" alt="imagen"
-                        width="45px"></label>
+                <label class="form-label fs-5">Cantidad <img src="assets/img/cantidad.gif" alt="imagen" width="45px"></label>
                 <input type="text" class="form-control fs-5" name="cantidad">
 
             </div>
@@ -289,6 +285,7 @@
             </div>
             <div class="col-12 text-center mt-3">
                 <?php
+                // Si alguno de los datos no está correcto, lo mostramos
                 if (isset($err_nombre) || isset($err_precio) || isset($err_descripcion) || isset($err_cantidad) || isset($err_imagen)) {
                     echo '<div class="alert alert-danger" role="alert">';
                     echo '¡Ups! Hubo un problema. Por favor, revisa los errores:';
@@ -305,6 +302,7 @@
                         echo "<li>$err_imagen</li>";
                     echo '</ul>';
                     echo '</div>';
+                    // Si todo es correcto, lo mostramos
                 } elseif (isset($nombre) && isset($precio) && isset($descripcion) && isset($cantidad) && isset($ruta_final)) {
                     echo '<div class="alert alert-success" role="alert">';
                     echo '<h4 class="alert-heading">¡Producto registrado con éxito!</h4>';
@@ -323,6 +321,7 @@
     </section>
 
     <?php
+    // En este momento estamos listo para enviar todos los datos a la base de datos con los datos correctos
     if (isset($nombre) && isset($precio) && isset($descripcion) && isset($cantidad) && isset($ruta_final)) {
         $sql = "INSERT INTO productos (nombreProducto, precio, descripcion,
                                                 cantidad, imagen)
@@ -335,7 +334,6 @@
     <footer class="bg-dark" id="tempaltemo_footer">
         <div class="container">
             <div class="row">
-
                 <div class="col-md-4 pt-5">
                     <h2 class="h2 text-success border-bottom pb-3 border-light logo">Satoru no kōnā</h2>
                     <ul class="list-unstyled text-light footer-link-list">
@@ -354,6 +352,7 @@
                     </ul>
                 </div>
 
+                <!-- Lista del footer -->
                 <div class="col-md-4 pt-5">
                     <h2 class="h2 text-light border-bottom pb-3 border-light">Productos</h2>
                     <ul class="list-unstyled text-light footer-link-list">
@@ -365,7 +364,6 @@
                         <li><a class="text-decoration-none" href="#">Posters</a></li>
                     </ul>
                 </div>
-
                 <div class="col-md-4 pt-5">
                     <h2 class="h2 text-light border-bottom pb-3 border-light">Info</h2>
                     <ul class="list-unstyled text-light footer-link-list">
@@ -376,36 +374,34 @@
                     </ul>
                 </div>
             </div>
-
             <div class="row text-light mb-4">
                 <div class="col-12 mb-3">
                     <div class="w-100 my-3 border-top border-light"></div>
                 </div>
                 <div class="col-auto me-auto">
                     <ul class="list-inline text-left footer-icons">
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img
-                                    class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
+                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img"
-                                    src="assets/img/insta.png" alt="Brand Logo"></a>
+                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img"
-                                    src="assets/img/twitter.png" alt="Brand Logo"></a>
+                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img"
-                                    src="assets/img/git.png" alt="Brand Logo"></a>
+                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo"></a>
                         </li>
                     </ul>
                 </div>
                 <div class="col-auto">
                     <label class="sr-only" for="subscribeEmail">Email address</label>
                     <div class="input-group mb-2">
-                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
-                            placeholder="Email">
+                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email">
                         <div class="input-group-text btn-success text-light">Subscribirse</div>
                     </div>
                 </div>

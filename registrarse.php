@@ -13,7 +13,9 @@
 
 <body class="bg-info d-flex justify-content-center align-items-center vh-100">
     <?php
+    // Comprueba el formulario
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Depuramos los datos para controlar lo que el usuario introduce
         $temp_usuario = depurar($_POST["usuario"]);
         $temp_contrasena = depurar($_POST["contrasena"]);
         $temp_nacimiento = depurar($_POST["fecha_nacimiento"]);

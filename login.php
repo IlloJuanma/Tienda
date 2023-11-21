@@ -18,16 +18,19 @@
         $usuario = depurar($_POST["usuario"]);
         $contrasena = depurar($_POST["contrasena"]);
 
+        // Buscamos en la base de datos todos los usuarios registrados
         $sql = "SELECT * FROM usuarios WHERE usuario = '$usuario'";
         $resultado = $conexion->query($sql);
 
         if ($resultado->num_rows === 0) {
+            //Si esa variable esta vacía
             echo '<div class="alert alert-danger text-center" role="alert">
             <strong>Error:</strong> Usuario no encontrado
                   </div>';
 
 
         } else {
+            //Sino, confirmamos contraseña y rol
             while ($fila = $resultado->fetch_assoc()) {
                 $contrasena_cifrada = $fila["contrasena"];
                 $rol_temp = $fila["rol"];
@@ -37,6 +40,7 @@
 
 
             if ($acceso_valido) {
+                //Si el usuario es válido y esta en la bbdd
                 echo "<h2>Usuario encontrado</h2>";
                 session_start();
                 $_SESSION["usuario"] = $usuario;
@@ -73,10 +77,12 @@
                     <div class="pt-1" style="font-size: 0.9rem">Recordar</div>
                 </div>
                 <div class="pt-1">
+                    <!-- :D:D:D:D:D:D:D:D:D:D:D:D:D:D:D:D:D -->
                     <a href="https://www.youtube.com/watch?v=ERSsOAR4w6c" target="_blank"
                         class="text-decoration-none text-info fw-semibold fst-italic" style="font-size: 0.9rem">¿Olvidó
                         la
                         contraseña?</a>
+                    <!-- :D:D:D:D:D:D:D:D:D:D:D:D:D:D:D:D:D -->
                 </div>
             </div>
             <input class="btn btn-info text-white w-100 mt-4 fw-semibold shadow-sm" type="submit"
@@ -96,7 +102,7 @@
             <img src="assets/img/google.png" alt="google-icon" style="height: 1.6rem" />
             <div class="fw-semibold text-secondary">Continuar con Google</div>
         </div>
-        <!-- Enlace "Continuar como invitado" -->
+        <!-- Enlace "Continuar como invitado" , esto solo lleva a principal. En principal.php es donde controlo si es usuario, admin o invitado-->
         <a href="principal.php" class="btn d-flex gap-2 justify-content-center border mt-3 shadow-sm">
             <div class="d-flex align-items-center gap-2">
                 <img src="assets/img/invitado.gif" alt="guest-icon" style="height: 1.6rem" />

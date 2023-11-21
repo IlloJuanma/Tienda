@@ -14,8 +14,7 @@
     <link rel="stylesheet" href="assets/css/custom.css">
 
     <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
     <!-- Cargamos los requires necesarios de PhP-->
     <?php require 'objetos/producto.php' ?>
@@ -44,30 +43,32 @@
     // Obtengo el idCestas y la cantidad del usuario actual
     $sqlCesta = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
     $resultadoCestas = $conexion->query($sqlCesta);
+    // Mientras haya cestas en la bbdd...(sea mayor a 0)
     if ($resultadoCestas->num_rows > 0) {
         $filaCestas = $resultadoCestas->fetch_assoc();
         $idCesta = $filaCestas["idCesta"];
     }
 
+    // Si hay usuario registrado (ya sea como admin o usuario no como invitado CUIDADO OJO GASTEN CUIDAO!!)
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION["usuario"])) {
-
-
         // Insertar en la tabla Pedidos
         $sqlInsertarPedido = "INSERT INTO pedidos (usuario) VALUES ('$usuario')";
-
+        //Si la conexión se realiza con éxito
         if ($conexion->query($sqlInsertarPedido)) {
 
             // Obtener el idPedido recién insertado ()
             $idPedido = $conexion->insert_id;
 
+            // Inicializo el contador a 1 para empezar el bucle for de abajo, pero algo no funciona bien...mmm... Omoshiroi....
             $contador = 1;
-            // Obtener productos de la cesta
+
+            // Obtener productos de la cesta no me preguntes esta parte alejandra que e molto difficile
             $sqlPedido = "SELECT p.idProducto AS idProducto,
                              p.precio AS precio, 
                              c.cantidad AS cantidad
-                      FROM productos p JOIN productosCestas c
-                      ON p.idProducto = c.idProducto
-                      WHERE idCesta ='$idCesta'";
+                          FROM productos p JOIN productosCestas c
+                          ON p.idProducto = c.idProducto
+                          WHERE idCesta ='$idCesta'";
             $resultado = $conexion->query($sqlPedido);
 
             // Insertar en la tabla lineasPedidos
@@ -80,15 +81,15 @@
                 $sqlInsertLineaPedido = "INSERT INTO lineasPedidos (lineaPedido, idPedido, idProducto, precioUnitario, cantidad)
                                     VALUES ('$contador', '$idPedido', '$idProducto', '$precioUnitario', '$cantidad')";
                 if ($conexion->query($sqlInsertLineaPedido)) {
-                    //todo ha ido bien, mostramos un mensaje de éxito
+                    // Si todo ha ido bien mostramos mensaje de exito
                     $mensajeExito = "Pedido realizado con éxito. ID del pedido: $idPedido";
                 } else {
-                    // Hubo un error al insertar la línea de pedido
+                    // Si hay errores al insertar la línea de pedido mostramos mensaje :(
                     $mensajeError = "Error al insertar la línea de pedido.";
                 }
             }
 
-            // Actualizamos el precio total en la tabla pedidos
+            // Actualizamos el precio total en la tabla pedidos, por si hemos añadido más productos, somos ricos ya sabe
             $sqlUpdatePedido = "UPDATE pedidos SET precioTotal = (SELECT SUM(precioUnitario * cantidad) FROM lineasPedidos WHERE idPedido = '$idPedido') WHERE idPedido = '$idPedido'";
             $conexion->query($sqlUpdatePedido);
 
@@ -96,11 +97,9 @@
             $sqlVaciarCesta = "DELETE FROM productosCestas WHERE idCesta = '$idCesta'";
             $conexion->query($sqlVaciarCesta);
         } else {
-            // Hubo un error al insertar el pedido
+            // Hubo un error al insertar el pedido :(
             echo "Error al realizar el pedido.";
         }
-
-
     }
     ?>
 
@@ -110,24 +109,24 @@
             <div class="w-100 d-flex justify-content-between">
                 <div>
                     <i class="fa fa-envelope mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none"
-                        href="mailto:info@company.com">IlloJuanma@gmail.com</a>
+                    <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">IlloJuanma@gmail.com</a>
                     <i class="fa fa-phone mx-2"></i>
                     <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">050-254-6399</a>
                 </div>
                 <div>
+                    <!-- Sigueme :D -->
                     <a href="https://steamcommunity.com/profiles/76561198093473164">
-                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Sigueme :D -->
                     <a href="https://www.instagram.com/juanma_rodrguez/">
-                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
                     <a href="https://twitter.com/MrFlexaverde">
-                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"
-                            style="width: 30px;">
+                        <img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo" style="width: 30px;">
                     </a>
+                    <!-- Sigueme :D -->
                     <a href="https://github.com/IlloJuanma">
                         <img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo" style="width: 30px;">
                     </a>
@@ -136,6 +135,7 @@
         </div>
     </nav>
     <!-- Cierre NAV -->
+    
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-light shadow">
         <div class="container d-flex justify-content-between align-items-center">
@@ -156,14 +156,11 @@
                 <?php } ?>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
-                id="templatemo_main_nav">
+            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
                 <div class="flex-fill">
                     <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
                         <li class="nav-item">
@@ -198,14 +195,12 @@
                             </div>
                         </div>
                     </div>
-                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
-                        data-bs-target="#templatemo_search">
+                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                         <i class="fa fa-fw fa-search text-dark mr-2"></i>
                     </a>
                     <a class="nav-icon position-relative text-decoration-none" href="#">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span
-                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
+                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
                             <?php echo $totalProductosEnCesta; ?>
                         </span>
                     </a>
@@ -219,8 +214,7 @@
     </nav>
     <!-- Cierre Header -->
     <!-- Modal -->
-    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="w-100 pt-1 mb-5 text-right">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -383,30 +377,28 @@
                 </div>
                 <div class="col-auto me-auto">
                     <ul class="list-inline text-left footer-icons">
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img
-                                    class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
+                            <a href="https://steamcommunity.com/profiles/76561198093473164"><img class="img-fluid brand-img" src="assets/img/steam2.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img"
-                                    src="assets/img/insta.png" alt="Brand Logo"></a>
+                            <a href="https://www.instagram.com/juanma_rodrguez/"><img class="img-fluid brand-img" src="assets/img/insta.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Si eres de sensibilidad frágil, no entres en mi Twitter -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <!-- NO MIRAR 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない！ Minai! 見ない -->
-                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img"
-                                    src="assets/img/twitter.png" alt="Brand Logo"></a>
+                            <a href="https://twitter.com/MrFlexaverde"><img class="img-fluid brand-img" src="assets/img/twitter.png" alt="Brand Logo"></a>
                         </li>
+                        <!-- Sigueme :D -->
                         <li class="list-inline-item border border-light rounded-circle text-center">
-                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img"
-                                    src="assets/img/git.png" alt="Brand Logo"></a>
+                            <a href="https://github.com/IlloJuanma"><img class="img-fluid brand-img" src="assets/img/git.png" alt="Brand Logo"></a>
                         </li>
                     </ul>
                 </div>
                 <div class="col-auto">
                     <label class="sr-only" for="subscribeEmail">Email address</label>
                     <div class="input-group mb-2">
-                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
-                            placeholder="Email">
+                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email">
                         <div class="input-group-text btn-success text-light">Subscribirse</div>
                     </div>
                 </div>
