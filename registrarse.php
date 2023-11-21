@@ -23,7 +23,7 @@
 
         // He modificado esto porque verás en uno de mis muchos ensayo y error, me di cuenta que si ya tenia un usuario con el mismo nombre
         // me petaba todo y me explotaba un error de la leche en mi página y digo anda la wea no manches, habrá que controlar esto, pero como lo controlo
-        // usuario y contraseña solo usuario, solo contraseña (este último es absurdo) asi me decidi por lo mas fácil, controlar si ya existe el usuario
+        // usuario y contraseña, solo usuario, solo contraseña (este último es absurdo) asi me decidi por lo mas fácil, controlar si ya existe el usuario
         // que se puede cambiar po si, que lo haré, pues puede que también pero por ahora, disfruten de la pelicula...
 
         # Validación de usuario

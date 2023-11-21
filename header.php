@@ -38,6 +38,8 @@
                         </li>
 
                         <?php
+                        // Solo el administrador tiene poder para registrar productos, los demás no tienen poder aqui, no pueden pasar!¡Soy siervo del Fuego Secreto, administrador de la llama de Anor!
+                        // ¡Tu Fuego Oscuro es en vano! ¡Llama de Udûn! ¡Vuelve a la Sombra! ¡NO... PUEDES... PASAR!!!!
                         if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "admin") { ?>
                             <li class="nav-item">
                                 <a class="nav-link" href="crear_producto.php">Registrar productos</a>

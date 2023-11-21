@@ -34,8 +34,8 @@
     // Consultamos la cantidad total de productos en la cesta del usuario actual
     $sqlCantidadCesta =
         "SELECT SUM(cantidad) as totalProductos FROM productosCestas pc
-     INNER JOIN cestas c ON pc.idCesta = c.idCesta
-     WHERE c.usuario = '$usuario'";
+         INNER JOIN cestas c ON pc.idCesta = c.idCesta
+         WHERE c.usuario = '$usuario'";
 
     $resultadoCantidadCesta = $conexion->query($sqlCantidadCesta);
 

@@ -28,7 +28,6 @@
             <strong>Error:</strong> Usuario no encontrado
                   </div>';
 
-
         } else {
             //Sino, confirmamos contraseña y rol
             while ($fila = $resultado->fetch_assoc()) {
@@ -37,7 +36,6 @@
             }
 
             $acceso_valido = password_verify($contrasena, $contrasena_cifrada);
-
 
             if ($acceso_valido) {
                 //Si el usuario es válido y esta en la bbdd
